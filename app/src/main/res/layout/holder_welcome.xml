@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:paddingLeft="32dp"
+              android:paddingRight="32dp">
+
+    <TextView
+        android:id="@+id/textNick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="78dp"
+        android:text="Hej, Krachtan"
+        android:textColor="#283149"
+        android:textSize="36sp"
+        app:fontFamily="@font/atletico_medium"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="81dp"
+        android:layout_marginTop="6dp"
+        android:text="Typuj wyniki spotkań razem ze swoimi znajomymi."
+        android:textColor="#283149"
+        android:textSize="20sp"/>
+
+</LinearLayout>
