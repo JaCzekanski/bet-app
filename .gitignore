@@ -66,7 +66,7 @@ gen/
 
 # Gradle files
 .gradle/
-build/
+retrofit/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -130,7 +130,9 @@ atlassian-ide-plugin.xml
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
 crashlytics.properties
-crashlytics-build.properties
+crashlytics-retrofit.properties
 
 # Keystore
 *.jks
+
+build/

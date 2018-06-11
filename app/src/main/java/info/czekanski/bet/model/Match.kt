@@ -6,6 +6,7 @@ import java.util.*
 
 @Parcelize
 data class Match(
+        val id: String = "",
         val team1: Team = "",
         val team2: Team = "",
         val date: Date = Date(),
