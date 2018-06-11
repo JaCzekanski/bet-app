@@ -13,7 +13,8 @@
         <action
             android:id="@+id/actionOpenMatch"
             app:destination="@id/matchFragment"
-            app:launchDocument="true"
+            app:enterAnim="@anim/from_bottom"
+            app:popExitAnim="@anim/fade_out"
             app:popUpToInclusive="false"/>
         <action
             android:id="@+id/action_menu_homeFragment"
