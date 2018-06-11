@@ -1,4 +1,4 @@
-package info.czekanski.bet.domain.matches
+package info.czekanski.bet.domain.home
 
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
@@ -6,19 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.matches.cells.Cell
-import info.czekanski.bet.domain.matches.cells.HeaderCell
-import info.czekanski.bet.domain.matches.cells.WelcomeCell
-import info.czekanski.bet.domain.matches.cells.MatchCell
-import info.czekanski.bet.domain.matches.view_holder.WelcomeViewHolder
-import info.czekanski.bet.domain.matches.view_holder.MatchViewHolder
-import info.czekanski.bet.domain.matches.view_holder.HeaderViewHolder
+import info.czekanski.bet.domain.home.cells.Cell
+import info.czekanski.bet.domain.home.cells.HeaderCell
+import info.czekanski.bet.domain.home.cells.WelcomeCell
+import info.czekanski.bet.domain.home.cells.MatchCell
+import info.czekanski.bet.domain.home.view_holder.WelcomeViewHolder
+import info.czekanski.bet.domain.home.view_holder.MatchViewHolder
+import info.czekanski.bet.domain.home.view_holder.HeaderViewHolder
 
-class MatchesAdapter(private val cells: List<Cell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MatchesAdapter(
+        private val cells: List<Cell>,
+        private val callback: Callback
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
         TYPE_WELCOME -> WelcomeViewHolder(parent.inflate(R.layout.holder_welcome))
         TYPE_HEADER -> HeaderViewHolder(parent.inflate(R.layout.holder_header))
-        TYPE_MATCH -> MatchViewHolder(parent.inflate(R.layout.holder_match))
+        TYPE_MATCH -> MatchViewHolder(parent.inflate(R.layout.holder_match), callback)
         else -> throw RuntimeException("Unknown viewType $viewType for MatchesAdapter")
     }
 
@@ -51,3 +54,5 @@ class MatchesAdapter(private val cells: List<Cell>) : RecyclerView.Adapter<Recyc
     private fun ViewGroup.inflate(@LayoutRes layout: Int): View =
             LayoutInflater.from(context).inflate(layout, this, false)
 }
+
+typealias Callback = (Cell) -> Unit

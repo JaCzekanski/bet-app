@@ -1,4 +1,4 @@
-package info.czekanski.bet.domain.matches
+package info.czekanski.bet.domain.home
 
 
 import android.graphics.Rect
@@ -10,15 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.matches.cells.HeaderCell
-import info.czekanski.bet.domain.matches.cells.WelcomeCell
-import info.czekanski.bet.domain.matches.cells.MatchCell
+import info.czekanski.bet.domain.home.cells.HeaderCell
+import info.czekanski.bet.domain.home.cells.WelcomeCell
+import info.czekanski.bet.domain.home.cells.MatchCell
+import info.czekanski.bet.domain.match.MatchFragment
 import info.czekanski.bet.model.Match
-import kotlinx.android.synthetic.main.fragment_matches.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
-class MatchesFragment : Fragment() {
+class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_matches, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,7 +33,11 @@ class MatchesFragment : Fragment() {
                     recyclerView.adapter = MatchesAdapter(listOf(
                             WelcomeCell("Krachtan"),
                             HeaderCell("Najbliższe mecze")
-                    ) + matches)
+                    ) + matches, {
+                        if (it is MatchCell) {
+                            goToMatchView(it.match)
+                        }
+                    })
 
                     recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
                         override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
@@ -41,6 +46,14 @@ class MatchesFragment : Fragment() {
                         }
                     })
                 }
+    }
+
+    private fun goToMatchView(match: Match) {
+        requireActivity().supportFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.design_bottom_sheet_slide_in, R.anim.abc_fade_out, R.anim.abc_fade_in, R.anim.abc_fade_out)
+                .replace(R.id.container, MatchFragment.newInstance(match))
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
     }
 
     val Int.dpToPx: Int

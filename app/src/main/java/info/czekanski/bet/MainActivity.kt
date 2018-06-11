@@ -2,7 +2,7 @@ package info.czekanski.bet
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import info.czekanski.bet.domain.matches.MatchesFragment
+import info.czekanski.bet.domain.home.HomeFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, MatchesFragment())
+                    .replace(R.id.container, HomeFragment())
                     .commitAllowingStateLoss()
         }
     }

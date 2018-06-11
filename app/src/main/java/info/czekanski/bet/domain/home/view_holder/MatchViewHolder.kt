@@ -1,23 +1,19 @@
-package info.czekanski.bet.domain.matches.view_holder
+package info.czekanski.bet.domain.home.view_holder
 
-import android.content.Context
 import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import info.czekanski.bet.domain.home.Callback
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.holder_match.*
-import info.czekanski.bet.domain.matches.cells.MatchCell
+import info.czekanski.bet.domain.home.cells.MatchCell
 import info.czekanski.bet.misc.GlideApp
+import kotlinx.android.synthetic.main.layout_match.*
 import java.text.SimpleDateFormat
 import java.util.*
-import android.support.v4.os.ConfigurationCompat.getLocales
-import android.os.Build
-import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MatchViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+class MatchViewHolder(override val containerView: View, val callback: Callback) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     fun bind(cell: MatchCell) {
         with(cell) {
@@ -35,14 +31,18 @@ class MatchViewHolder(override val containerView: View) : RecyclerView.ViewHolde
                     .centerInside()
                     .apply(RequestOptions.circleCropTransform())
                     .into(flag2)
-        }
-    }
 
-    private fun getCountryName(code: String): String {
-        return Locale("", code.toUpperCase()).displayCountry
+            button.setOnClickListener {
+                callback(cell)
+            }
+        }
     }
 
     companion object {
         val formatter = SimpleDateFormat("H:mm  .  d.MM", Locale.US)
+
+        fun getCountryName(code: String): String {
+            return Locale("", code.toUpperCase()).displayCountry
+        }
     }
 }

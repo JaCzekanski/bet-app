@@ -1,4 +1,4 @@
-package info.czekanski.bet.domain.matches.cells
+package info.czekanski.bet.domain.home.cells
 
 import info.czekanski.bet.model.Match
 
