@@ -57,7 +57,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <ImageView
+            <info.czekanski.bet.views.OctagonalImageView
                 android:id="@+id/flag1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -124,7 +124,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <ImageView
+            <info.czekanski.bet.views.OctagonalImageView
                 android:id="@+id/flag2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
