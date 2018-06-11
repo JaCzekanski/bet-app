@@ -8,6 +8,8 @@ import java.util.*
 data class Match(
         val team1: Team = "",
         val team2: Team = "",
-        val date: Date = Date()
+        val date: Date = Date(),
+        val event: String? = null,
+        val score: String? = null
 ) : Parcelable
 typealias Team = String

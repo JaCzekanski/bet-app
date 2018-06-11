@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/darkBackground"
@@ -19,90 +20,47 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="-8dp"/>
 
-    <!-- card -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:background="@color/background">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:translationZ="1dp"
             app:srcCompat="@drawable/ic_fold"/>
 
         <ImageView
+            android:id="@+id/imageBall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginRight="-80dp"
             android:layout_marginTop="-60dp"
+            android:layout_marginRight="-80dp"
             android:alpha="0.03"
             app:srcCompat="@drawable/ic_ball"/>
 
-        <LinearLayout
+        <include
+            android:id="@+id/layoutBid"
+            layout="@layout/layout_match_bid"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <include
+            android:id="@+id/layoutScore"
+            layout="@layout/layout_match_score"
+            android:visibility="gone"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingLeft="32dp"
-            android:paddingRight="32dp"
-            android:paddingTop="75dp"
-            android:paddingBottom="26dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Jaką stawkę ustawiasz?"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                app:fontFamily="@font/atletico_medium"/>
-
-            <TextView
-                android:layout_width="250dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="33dp"
-                android:background="@color/darkBackground"
-                android:gravity="center"
-                android:text="5 zł"
-                android:textColor="#ffffff"
-                android:textSize="78sp"
-                app:fontFamily="@font/atletico_medium"/>
-
-            <LinearLayout
-                android:layout_width="250dp"
-                android:layout_height="42dp"
-                android:background="#ffffff"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_remove"
-                    android:layout_marginRight="20dp"
-                    android:tint="@color/colorAccent"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_add"
-                    android:layout_marginLeft="20dp"
-                    android:tint="@color/colorAccent"/>
-            </LinearLayout>
-
-            <Space
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-            <android.support.design.button.MaterialButton
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Dalej"/>
-
-        </LinearLayout>
-
-
+            android:visibility="gone"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/holder_summary_entry"/>
     </FrameLayout>
 
 </LinearLayout>

@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.home.cells.Cell
+import info.czekanski.bet.misc.Cell
 import info.czekanski.bet.domain.home.cells.HeaderCell
 import info.czekanski.bet.domain.home.cells.WelcomeCell
 import info.czekanski.bet.domain.home.cells.MatchCell

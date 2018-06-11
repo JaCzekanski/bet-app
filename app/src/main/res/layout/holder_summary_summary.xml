@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+    android:layout_marginBottom="32dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="stawka"
+            android:textColor="#8a000000"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/textStake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/atletico_medium"
+            android:text="10 zł"
+            android:textColor="#de000000"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="kawa w puli"
+            android:textColor="#8a000000"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/textJackpot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/atletico_medium"
+            android:text="30 zł"
+            android:textColor="#6f000000"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+</LinearLayout>
