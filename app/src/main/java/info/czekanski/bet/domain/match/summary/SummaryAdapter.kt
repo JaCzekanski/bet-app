@@ -22,6 +22,7 @@ class SummaryAdapter(
         TYPE_SUMMARY -> SummaryViewHolder(parent.inflate(R.layout.holder_summary_summary))
         TYPE_NOTE -> SummaryViewHolder(parent.inflate(R.layout.holder_summary_note))
         TYPE_INVITE -> InviteViewHolder(parent.inflate(R.layout.holder_summary_invite))
+        TYPE_LOADER -> StaticViewHolder(parent.inflate(R.layout.holder_summary_loader))
         else -> throw RuntimeException("Unknown viewType $viewType for MatchesAdapter")
     }
 
@@ -47,6 +48,7 @@ class SummaryAdapter(
         is SummaryCell -> TYPE_SUMMARY
         is NoteCell -> TYPE_NOTE
         is InviteCell -> TYPE_INVITE
+        is LoaderCell -> TYPE_LOADER
         else -> throw RuntimeException("Unknown viewtype for position $position")
     }
 
@@ -57,6 +59,7 @@ class SummaryAdapter(
         const val TYPE_SUMMARY = 4
         const val TYPE_NOTE = 5 // nikt nie wygrał
         const val TYPE_INVITE = 6
+        const val TYPE_LOADER = 7
     }
 }
 

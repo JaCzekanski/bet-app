@@ -7,28 +7,45 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.firestore.FirebaseFirestore
 import info.czekanski.bet.R
+import info.czekanski.bet.R.id.bet
+import info.czekanski.bet.domain.home.MatchesAdapter
+import info.czekanski.bet.domain.home.cells.MatchCell
+import info.czekanski.bet.domain.home.cells.WelcomeCell
 import info.czekanski.bet.domain.home.utils.ItemDecorator
 import info.czekanski.bet.domain.home.view_holder.MatchViewHolder
 import info.czekanski.bet.domain.home.view_holder.MatchViewHolder.Companion.getCountryName
 import info.czekanski.bet.domain.match.MatchViewState.Step.*
 import info.czekanski.bet.domain.match.summary.SummaryAdapter
 import info.czekanski.bet.domain.match.summary.cells.*
+import info.czekanski.bet.misc.Cell
 import info.czekanski.bet.misc.GlideApp
 import info.czekanski.bet.model.Match
+import info.czekanski.bet.network.BetService
+import info.czekanski.bet.network.firebase.model.FirebaseBet
+import info.czekanski.bet.network.firebase.model.FirebaseBetEntry
+import info.czekanski.bet.network.model.Bet
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_match.*
 import kotlinx.android.synthetic.main.layout_match.*
 import kotlinx.android.synthetic.main.layout_match_bid.*
 import kotlinx.android.synthetic.main.layout_match_score.*
 
 class MatchFragment : Fragment() {
+    val betService: BetService by lazy { BetService.instance }
+
     val match by lazy { getArgument<Match>() }
     val state: MutableLiveData<MatchViewState> = MutableLiveData()
 
@@ -79,13 +96,60 @@ class MatchFragment : Fragment() {
             if (state.v.score.second < 9) state.postValue(state.v.updateScore(second = state.v.score.second + 1))
         }
         buttonAccept2.setOnClickListener {
-            state.postValue(state.v.copy(step = LIST))
+            if (state.v.bet == null) {
+                betService.api.createBet(match.id, Bet(state.v.bid, state.v.scoreAsString()), "8764327423567")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe { state.postValue(state.v.copy(step = LIST)) }
+                        .subscribeBy(onSuccess = { result ->
+                            if (state.v.bet == null) {
+                                loadBet(result.id)
+                            }
+                        }, onError = {
+                            state.postValue(state.v.copy(step = SCORE))
+                            Toast.makeText(context, "Unable to create bet!", Toast.LENGTH_SHORT).show()
+                            Log.w("CreateBet", it)
+                        })
+            } else {
+                betService.api.updateBet(state.v.bet?.id!!, Bet(state.v.bid, state.v.scoreAsString()), "8764327423567")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(onError = {
+                            Toast.makeText(context, "Unable to update bet!", Toast.LENGTH_SHORT).show()
+                            Log.w("UpdateBet", it)
+                        })
+            }
         }
+
+        buttonEdit.setOnClickListener {
+            if (state.v.step == LIST) {
+                state.postValue(state.v.copy(step = BID))
+            }
+        }
+
+
+        recyclerView.addItemDecoration(ItemDecorator())
+    }
+
+    private fun loadBet(id: String) {
+        FirebaseFirestore.getInstance()
+                .document("bets/$id")
+                .addSnapshotListener { doc, _ ->
+                    if (doc == null || !doc.exists()) {
+                        state.postValue(state.v.copy(step = SCORE))
+                        Toast.makeText(context, "Unable to load bet! wtf", Toast.LENGTH_SHORT).show()
+                        return@addSnapshotListener
+                    }
+
+                    val bet = doc.toObject(FirebaseBet::class.java)!!.copy(id = doc.id)
+                    state.postValue(state.v.copy(step = LIST, bet = bet))
+                }
     }
 
     private fun updateView(state: MatchViewState) {
         // Misc
         imageBall.show(state.step != LIST)
+        buttonEdit.show(state.step == LIST && state.bet != null)
 
         // Steps
         layoutBid.show(state.step == BID)
@@ -101,17 +165,35 @@ class MatchFragment : Fragment() {
                 textScore2.text = "${state.score.second}"
             }
             LIST -> {
-                recyclerView.adapter = SummaryAdapter(listOf(
-                        HeaderCell(),
-                        SeparatorCell(),
-                        EntryCell("Krachtan", Pair(2, 1)),
-                        EntryCell("Krystian", Pair(0, 1)),
-//                        EntryCell("Bartek", Pair(2, 3)),
-                        SeparatorCell(),
-                        SummaryCell(10, 30),
-                        InviteCell(showText = true)
-                ))
-                recyclerView.addItemDecoration(ItemDecorator())
+
+                val cells: MutableList<Cell>
+                if (state.bet == null) {
+                    cells = mutableListOf(LoaderCell())
+                } else {
+                    cells = mutableListOf(
+                            HeaderCell(),
+                            SeparatorCell()
+                    )
+
+                    state.bet.bets.forEach {
+                        val userId = it.key
+                        val betEntry = it.value
+
+                        val score = betEntry.scoreToPair() ?: return@forEach
+                        cells += EntryCell(userId, score)
+                    }
+
+                    // Get user id and find his bet
+
+                    val jackpot = state.bet.bets.values
+                            .mapNotNull { it.bid }
+                            .reduce { acc, i -> acc + i }
+
+                    cells += SeparatorCell()
+                    cells += SummaryCell(-1, jackpot)
+                    cells += InviteCell(showText = true)
+                }
+                recyclerView.adapter = SummaryAdapter(cells)
             }
         }
     }

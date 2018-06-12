@@ -24,7 +24,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment() {
-    val betService: BetService by lazy { BetService.instance }
+    val firestore by lazy { FirebaseFirestore.getInstance() }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -35,8 +35,12 @@ class HomeFragment : Fragment() {
         recyclerView.adapter = MatchesAdapter(listOf(), {})
         recyclerView.addItemDecoration(ListDecorator())
 
-        FirebaseFirestore.getInstance()
-                .collection("matches")
+        loadMatches()
+        loadBets()
+    }
+
+    private fun loadMatches() {
+        firestore.collection("matches")
                 .addSnapshotListener { querySnapshot, _ ->
                     if (querySnapshot?.documents == null) return@addSnapshotListener
                     val matches: List<MatchCell> = querySnapshot.documents
@@ -44,30 +48,21 @@ class HomeFragment : Fragment() {
                             .map { it.toObject(Match::class.java)!!.copy(id = it.id) }
                             .map { MatchCell(it) }
 
-                    recyclerView.adapter = MatchesAdapter(listOf(
+                    val cells = listOf(
                             WelcomeCell("Krachtan"),
                             HeaderCell("Najbliższe mecze")
-                    ) + matches, {
-                        if (it is MatchCell) {
-                            if (it.match.id.isEmpty()) {
-                                Toast.makeText(context, "Invalid match id!", Toast.LENGTH_SHORT).show()
-                                return@MatchesAdapter
-                            }
+                    ) + matches
 
-                            // Create bet and go to it
-                            betService.api.createBet(it.match.id, "XDXDXDXDXD")
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeBy(onSuccess = { result ->
-                                        result.id // TODO: USE ME!!!
-                                        goToMatchView(it.match)
-                                    }, onError = {
-                                        Toast.makeText(context, "Unable to create bet!", Toast.LENGTH_SHORT).show()
-                                        Log.w("CreateBet", it)
-                                    })
+                    recyclerView.adapter = MatchesAdapter(cells, callback = {
+                        when (it) {
+                            is MatchCell -> goToMatchView(it.match)
                         }
                     })
                 }
+    }
+
+    private fun loadBets() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun goToMatchView(match: Match) {

@@ -10,10 +10,11 @@ interface BetApi {
 
     @POST("/api/bet/{matchId}")
     fun createBet(@Path("matchId") matchId: String,
+                  @Body bet: Bet,
                   @Header("Authorization") token: String): Single<ReturnId>
 
     @PUT("/api/bet/{betId}")
-    fun placeBet(@Path("betId") betId: String,
-                 @Body bet: Bet,
-                 @Header("Authorization") token: String): Completable
+    fun updateBet(@Path("betId") betId: String,
+                  @Body bet: Bet,
+                  @Header("Authorization") token: String): Completable
 }
