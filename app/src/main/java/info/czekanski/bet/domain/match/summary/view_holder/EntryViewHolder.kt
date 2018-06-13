@@ -1,12 +1,11 @@
 package info.czekanski.bet.domain.match.summary.view_holder
 
-import android.support.v7.widget.RecyclerView
-import android.view.View
-import info.czekanski.bet.R
-import info.czekanski.bet.domain.match.hide
-import info.czekanski.bet.domain.match.show
-import info.czekanski.bet.domain.match.summary.cells.EntryCell
-import kotlinx.android.extensions.LayoutContainer
+import android.support.v7.widget.*
+import android.view.*
+import info.czekanski.bet.*
+import info.czekanski.bet.domain.match.summary.cells.*
+import info.czekanski.bet.misc.*
+import kotlinx.android.extensions.*
 import kotlinx.android.synthetic.main.holder_summary_entry.*
 
 

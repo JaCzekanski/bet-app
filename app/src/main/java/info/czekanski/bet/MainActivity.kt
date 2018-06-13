@@ -1,15 +1,14 @@
 package info.czekanski.bet
 
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import info.czekanski.bet.domain.home.HomeFragment
-import info.czekanski.bet.domain.login.LoginFragment
-import info.czekanski.bet.domain.match.MatchFragment
-import info.czekanski.bet.domain.match.withArgument
-import info.czekanski.bet.model.Match
-import info.czekanski.bet.user.UserProvider
+import android.os.*
+import android.support.v4.app.*
+import android.support.v7.app.*
+import android.util.*
+import info.czekanski.bet.domain.home.*
+import info.czekanski.bet.domain.login.*
+import info.czekanski.bet.domain.match.*
+import info.czekanski.bet.misc.*
+import info.czekanski.bet.user.*
 
 
 class MainActivity : AppCompatActivity() {

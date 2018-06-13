@@ -10,5 +10,8 @@
     app:cardCornerRadius="4dp"
     app:cardElevation="4dp">
 
-    <include layout="@layout/layout_match" />
+    <info.czekanski.bet.views.MatchView
+        android:id="@+id/viewMatch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </android.support.design.card.MaterialCardView>

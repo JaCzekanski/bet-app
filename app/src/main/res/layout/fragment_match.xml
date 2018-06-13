@@ -30,9 +30,8 @@
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
 
-    <include
-        android:id="@+id/layoutMatch"
-        layout="@layout/layout_match"
+    <info.czekanski.bet.views.MatchView
+        android:id="@+id/viewMatch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="-8dp"

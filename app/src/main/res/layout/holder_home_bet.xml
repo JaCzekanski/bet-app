@@ -16,7 +16,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/layout_match"/>
+        <info.czekanski.bet.views.MatchView
+            android:id="@+id/viewMatch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <View
             android:id="@+id/viewSeparator"

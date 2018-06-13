@@ -1,28 +1,20 @@
 package info.czekanski.bet.domain.login
 
 
-import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.*
 import android.arch.lifecycle.Observer
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import android.os.*
+import android.support.v4.app.*
+import android.text.*
+import android.util.*
+import android.view.*
+import android.widget.*
 import info.czekanski.bet.R
-import info.czekanski.bet.R.id.*
-import info.czekanski.bet.domain.home.HomeFragment
-import info.czekanski.bet.domain.match.hide
-import info.czekanski.bet.domain.match.show
-import info.czekanski.bet.domain.match.v
-import info.czekanski.bet.user.UserProvider
-import io.reactivex.Completable
-import io.reactivex.rxkotlin.subscribeBy
+import info.czekanski.bet.domain.home.*
+import info.czekanski.bet.misc.*
+import info.czekanski.bet.user.*
+import io.reactivex.*
+import io.reactivex.rxkotlin.*
 import kotlinx.android.synthetic.main.fragment_login.*
 
 class LoginFragment : Fragment() {

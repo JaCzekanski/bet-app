@@ -1,30 +1,28 @@
 package info.czekanski.bet.domain.home
 
 
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.SimpleItemAnimator
+import android.os.*
+import android.support.v4.app.*
+import android.support.v7.widget.*
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.google.firebase.firestore.FirebaseFirestore
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
-import durdinapps.rxfirebase2.RxFirestore
+import android.view.*
+import com.google.firebase.firestore.*
+import com.uber.autodispose.android.lifecycle.*
+import com.uber.autodispose.kotlin.*
+import durdinapps.rxfirebase2.*
 import info.czekanski.bet.R
 import info.czekanski.bet.domain.home.cells.*
-import info.czekanski.bet.domain.home.utils.ListDecorator
-import info.czekanski.bet.domain.match.MatchFragment
-import info.czekanski.bet.domain.match.withArgument
-import info.czekanski.bet.misc.Cell
-import info.czekanski.bet.misc.applySchedulers
-import info.czekanski.bet.misc.subscribeBy
-import info.czekanski.bet.model.Match
-import info.czekanski.bet.network.firebase.model.FirebaseBet
-import info.czekanski.bet.user.UserProvider
-import io.reactivex.rxkotlin.Flowables
+import info.czekanski.bet.domain.home.utils.*
+import info.czekanski.bet.domain.match.*
+import info.czekanski.bet.misc.*
+import info.czekanski.bet.model.*
+import info.czekanski.bet.network.firebase.model.*
+import info.czekanski.bet.user.*
+import io.reactivex.rxkotlin.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlin.Pair
+import kotlin.getValue
+import kotlin.lazy
 
 class HomeFragment : Fragment() {
     val firestore by lazy { FirebaseFirestore.getInstance() }
@@ -62,7 +60,7 @@ class HomeFragment : Fragment() {
                 }
                 .applySchedulers()
 
-        val matchesFlowable = RxFirestore.observeQueryRef(firestore.collection("matches"))
+        val matchesFlowable = RxFirestore.observeQueryRef(firestore.collection("matches").orderBy("date"))
                 .map {
                     it.documents
                             .filterNotNull()
@@ -83,13 +81,13 @@ class HomeFragment : Fragment() {
                     val cells = mutableListOf<Cell>(WelcomeCell(userProvider.nick))
 
                     if (bets.isNotEmpty()) {
-                        val bets = bets.map { bet ->
+                        val betsWithMatches = bets.map { bet ->
                             bet.copy(match = matches.find { match ->
                                 match.id == bet.matchId
                             })
                         }
                         cells += HeaderCell("Twoje typy")
-                        cells += bets.map { BetCell(it) }
+                        cells += betsWithMatches.map { BetCell(it) }
                     }
 
                     if (matches.isNotEmpty()) {

@@ -1,53 +1,37 @@
 package info.czekanski.bet.domain.match
 
-import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.*
 import android.arch.lifecycle.Observer
-import android.content.Intent
-import android.net.Uri
-import android.os.Bundle
-import android.os.Parcelable
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
+import android.content.*
+import android.net.*
+import android.os.*
+import android.support.v4.app.*
+import android.util.*
+import android.view.*
 import android.view.View.*
-import android.view.ViewGroup
-import android.widget.Toast
-import com.bumptech.glide.request.RequestOptions
-import com.google.firebase.dynamiclinks.DynamicLink
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.google.firebase.dynamiclinks.ShortDynamicLink
-import com.google.firebase.firestore.FirebaseFirestore
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
-import durdinapps.rxfirebase2.RxFirestore
-import durdinapps.rxfirebase2.RxHandler
+import android.widget.*
+import com.google.firebase.dynamiclinks.*
+import com.google.firebase.firestore.*
+import com.uber.autodispose.android.lifecycle.*
+import com.uber.autodispose.kotlin.*
+import durdinapps.rxfirebase2.*
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.home.utils.ItemDecorator
-import info.czekanski.bet.domain.home.view_holder.MatchViewHolder
-import info.czekanski.bet.domain.home.view_holder.MatchViewHolder.Companion.getCountryName
+import info.czekanski.bet.domain.home.utils.*
 import info.czekanski.bet.domain.match.MatchViewState.Step.*
-import info.czekanski.bet.domain.match.summary.SummaryAdapter
+import info.czekanski.bet.domain.match.summary.*
 import info.czekanski.bet.domain.match.summary.cells.*
-import info.czekanski.bet.misc.Cell
-import info.czekanski.bet.misc.GlideApp
-import info.czekanski.bet.misc.applySchedulers
-import info.czekanski.bet.misc.subscribeBy
-import info.czekanski.bet.model.Match
-import info.czekanski.bet.network.BetService
-import info.czekanski.bet.network.firebase.model.FirebaseBet
-import info.czekanski.bet.network.model.Bet
-import info.czekanski.bet.network.scoreToPair
-import info.czekanski.bet.user.UserProvider
-import io.reactivex.Maybe
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.parcel.Parcelize
+import info.czekanski.bet.misc.*
+import info.czekanski.bet.model.*
+import info.czekanski.bet.network.*
+import info.czekanski.bet.network.firebase.model.*
+import info.czekanski.bet.network.model.*
+import info.czekanski.bet.user.*
+import io.reactivex.*
+import io.reactivex.android.schedulers.*
+import io.reactivex.rxkotlin.*
+import io.reactivex.schedulers.*
+import kotlinx.android.parcel.*
 import kotlinx.android.synthetic.main.fragment_match.*
-import kotlinx.android.synthetic.main.holder_summary_entry.*
-import kotlinx.android.synthetic.main.layout_match.*
 import kotlinx.android.synthetic.main.layout_match_bid.*
 import kotlinx.android.synthetic.main.layout_match_score.*
 
@@ -188,9 +172,10 @@ class MatchFragment : Fragment() {
     private fun updateView(state: MatchViewState) {
         // Misc
         if (state.match == null) {
-            layoutMatch.visibility = View.INVISIBLE
+            viewMatch.invisible()
         } else {
-            bindMatch(state.match)
+            viewMatch.show()
+            viewMatch.bindMatch(state.match)
         }
         imageBall.show(state.step != LIST)
         buttonEdit.show(state.step == LIST && state.bet != null)
@@ -252,32 +237,6 @@ class MatchFragment : Fragment() {
         }
     }
 
-    private fun bindMatch(match: Match) {
-        layoutMatch.show()
-
-        val gameScore = match.score?.scoreToPair() ?: Pair(0, 0)
-
-        score.setTextColor(ContextCompat.getColor(requireContext(), if (match.score != null) R.color.textActive else R.color.textInactive))
-        score.text = "%d - %d".format(gameScore.first, gameScore.second)
-
-        date.text = MatchViewHolder.formatter.format(match.date)
-        team1.text = getCountryName(match.team1)
-        team2.text = getCountryName(match.team2)
-
-        GlideApp.with(flag1.context)
-                .load(Uri.parse("file:///android_asset/flags/${match.team1}.png"))
-                .centerInside()
-                .into(flag1)
-
-        GlideApp.with(flag2.context)
-                .load(Uri.parse("file:///android_asset/flags/${match.team2}.png"))
-                .centerInside()
-                .apply(RequestOptions.circleCropTransform())
-                .into(flag2)
-
-        button.visibility = INVISIBLE
-    }
-
     fun createShareLink(): Maybe<ShortDynamicLink> {
         val betId = state.v.bet?.id ?: return Maybe.error(RuntimeException("No bet id!"))
 
@@ -306,28 +265,3 @@ class MatchFragment : Fragment() {
     @Parcelize
     data class Argument(val matchId: String? = null, val betId: String? = null) : Parcelable
 }
-
-
-fun <T : Fragment> T.withArgument(arg: Parcelable): T {
-    val bundle = Bundle()
-    bundle.putParcelable("ARG", arg)
-    arguments = bundle
-    return this
-}
-
-
-fun <T : Parcelable> Fragment.getArgument(): T =
-        arguments?.getParcelable("ARG")!!
-
-
-fun View.hide() {
-    visibility = GONE
-}
-
-fun View.show(visible: Boolean = true) {
-    visibility = if (visible) VISIBLE else GONE
-}
-
-val <T : Any> MutableLiveData<T>.v
-    get() = value!!
-

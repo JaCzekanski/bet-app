@@ -1,22 +1,15 @@
 package info.czekanski.bet.domain.home.view_holder
 
-import android.net.Uri
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
-import android.view.View
-import com.bumptech.glide.request.RequestOptions
-import info.czekanski.bet.R
-import info.czekanski.bet.domain.home.Callback
-import info.czekanski.bet.domain.home.cells.BetCell
-import info.czekanski.bet.domain.match.hide
-import info.czekanski.bet.domain.match.show
-import info.czekanski.bet.misc.GlideApp
-import info.czekanski.bet.network.firebase.model.FirebaseBetEntry
-import info.czekanski.bet.user.UserProvider
-import kotlinx.android.extensions.LayoutContainer
+import android.support.v7.widget.*
+import android.view.*
+import info.czekanski.bet.domain.home.*
+import info.czekanski.bet.domain.home.cells.*
+import info.czekanski.bet.misc.*
+import info.czekanski.bet.network.firebase.model.*
+import info.czekanski.bet.user.*
+import kotlinx.android.extensions.*
 import kotlinx.android.synthetic.main.holder_home_bet.*
-import kotlinx.android.synthetic.main.layout_match.*
-import java.text.SimpleDateFormat
+import java.text.*
 import java.util.*
 
 
@@ -24,34 +17,12 @@ class BetViewHolder(override val containerView: View, val callback: Callback) : 
     private val userProvider by lazy { UserProvider.instance }
 
     fun bind(cell: BetCell) {
-        val match = cell.bet.match
-        if (match != null) {
-            date.text = formatter.format(match.date)
-            team1.text = getCountryName(match.team1)
-            team2.text = getCountryName(match.team2)
-
-            GlideApp.with(flag1.context)
-                    .load(Uri.parse("file:///android_asset/flags/${match.team1}.png"))
-                    .centerInside()
-                    .into(flag1)
-
-            GlideApp.with(flag2.context)
-                    .load(Uri.parse("file:///android_asset/flags/${match.team2}.png"))
-                    .centerInside()
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(flag2)
-
-            score.text = match.score ?: "0 - 0"
-            score.setTextColor(ContextCompat.getColor(containerView.context, if (match.score != null) R.color.textActive else R.color.textInactive))
-        }
-
-        myScore.show()
-
-        containerView.setOnClickListener {
-            callback(cell)
-        }
-
         val userBet = cell.bet.bets[userProvider.userId]
+
+        cell.bet.match?.let { viewMatch.bindMatch(it, userScore = userBet?.score ?: "? - ?") }
+
+        containerView.setOnClickListener { callback(cell) }
+
         if (cell.bet.bets.size == 1 && userBet != null) {
             viewSeparator.hide()
             layoutBottom.hide()
@@ -64,8 +35,6 @@ class BetViewHolder(override val containerView: View, val callback: Callback) : 
             layoutBottom.show()
             buttonInvite.hide()
 
-            myScore.text = userBet?.score ?: "? - ?"
-
             textPeopleCount.text = formatPeopleCount(cell.bet.users.size)
             textJackpot.text = formatJackpot(cell.bet.bets.values)
 
@@ -73,8 +42,6 @@ class BetViewHolder(override val containerView: View, val callback: Callback) : 
                 callback(cell)
             }
         }
-
-        button.hide()
     }
 
     private fun formatJackpot(bets: Collection<FirebaseBetEntry>): String {
@@ -88,14 +55,6 @@ class BetViewHolder(override val containerView: View, val callback: Callback) : 
             1 -> "$count osoba"
             2, 3, 4 -> "$count osoby"
             else -> "$count osób"
-        }
-    }
-
-    companion object {
-        val formatter = SimpleDateFormat("H:mm  .  d.MM", Locale.US)
-
-        fun getCountryName(code: String): String {
-            return Locale("", code.toUpperCase()).displayCountry
         }
     }
 }

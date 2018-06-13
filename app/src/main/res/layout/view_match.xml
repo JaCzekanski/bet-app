@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:paddingBottom="25dp"
-              android:layout_marginTop="12dp"
-              android:clipChildren="false"
-              android:clipToPadding="false"
-              android:gravity="center_horizontal"
-              android:orientation="vertical"
-              tools:background="#333657">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       style="@style/MatchView"
+       tools:background="#333657"
+       tools:parentTag="android.widget.LinearLayout">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,9 +23,9 @@
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="19.06, 17:00"
             android:textColor="#b3ffffff"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            tools:text="19.06, 17:00"/>
 
         <View
             android:layout_width="0dp"
@@ -48,6 +42,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -70,9 +66,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:gravity="center_horizontal"
-                tools:text="Polska"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                tools:text="Polska"/>
         </LinearLayout>
 
         <LinearLayout
@@ -87,21 +83,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                tools:text="0 - 0"
                 android:textColor="@color/textInactive"
                 android:textSize="48sp"
-                app:fontFamily="@font/atletico_medium"/>
+                app:fontFamily="@font/atletico_medium"
+                tools:text="0 - 0"/>
 
             <TextView
                 android:id="@+id/myScore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="-10dp"
-                tools:text="2 - 1"
                 android:textColor="#ffffff"
                 android:textSize="20sp"
                 android:visibility="gone"
                 app:fontFamily="@font/atletico_medium"
+                tools:text="2 - 1"
                 tools:visibility="visible"/>
 
             <!-- too high -->
@@ -137,9 +133,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:gravity="center_horizontal"
-                tools:text="Polska"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                tools:text="Polska"/>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</merge>
