@@ -7,8 +7,5 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.holder_home_header.*
 
 
-class HeaderViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
-    fun bind(cell: HeaderCell) {
-        title.text = cell.name
-    }
+class StaticViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 }

@@ -10,9 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:alpha="0.03"
-        android:layout_marginRight="-80dp"
         android:layout_marginTop="-60dp"
+        android:layout_marginRight="-80dp"
+        app:tint="#07000000"
         app:srcCompat="@drawable/ic_ball"/>
 
     <android.support.v7.widget.RecyclerView
@@ -21,5 +21,5 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        tools:listitem="@layout/holder_match"/>
+        tools:listitem="@layout/holder_home_match"/>
 </FrameLayout>

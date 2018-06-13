@@ -20,7 +20,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="81dp"
+        android:layout_marginBottom="64dp"
         android:layout_marginTop="6dp"
         android:text="Typuj wyniki spotkań razem ze swoimi znajomymi."
         android:textColor="#283149"

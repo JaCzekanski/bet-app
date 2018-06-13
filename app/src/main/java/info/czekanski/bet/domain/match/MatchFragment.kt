@@ -17,6 +17,9 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
+import com.uber.autodispose.kotlin.autoDisposable
+import durdinapps.rxfirebase2.RxFirestore
 import info.czekanski.bet.R
 import info.czekanski.bet.R.id.bet
 import info.czekanski.bet.domain.home.MatchesAdapter
@@ -30,6 +33,8 @@ import info.czekanski.bet.domain.match.summary.SummaryAdapter
 import info.czekanski.bet.domain.match.summary.cells.*
 import info.czekanski.bet.misc.Cell
 import info.czekanski.bet.misc.GlideApp
+import info.czekanski.bet.misc.applySchedulers
+import info.czekanski.bet.misc.subscribeBy
 import info.czekanski.bet.model.Match
 import info.czekanski.bet.network.BetService
 import info.czekanski.bet.network.firebase.model.FirebaseBet
@@ -44,6 +49,7 @@ import kotlinx.android.synthetic.main.layout_match_bid.*
 import kotlinx.android.synthetic.main.layout_match_score.*
 
 class MatchFragment : Fragment() {
+    val firestore by lazy { FirebaseFirestore.getInstance() }
     val betService: BetService by lazy { BetService.instance }
 
     val match by lazy { getArgument<Match>() }
@@ -67,7 +73,7 @@ class MatchFragment : Fragment() {
 
     private fun initToolbar() {
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
-        toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+        toolbar.setNavigationOnClickListener { requireActivity().supportFragmentManager.popBackStack() }
     }
 
     private fun initViews() {
@@ -106,7 +112,7 @@ class MatchFragment : Fragment() {
                                 loadBet(result.id)
                             }
                         }, onError = {
-                            state.postValue(state.v.copy(step = SCORE))
+                            state.postValue(state.v.copy(step = BID))
                             Toast.makeText(context, "Unable to create bet!", Toast.LENGTH_SHORT).show()
                             Log.w("CreateBet", it)
                         })
@@ -127,23 +133,26 @@ class MatchFragment : Fragment() {
             }
         }
 
-
         recyclerView.addItemDecoration(ItemDecorator())
     }
 
     private fun loadBet(id: String) {
-        FirebaseFirestore.getInstance()
-                .document("bets/$id")
-                .addSnapshotListener { doc, _ ->
+        RxFirestore.observeDocumentRef(firestore.document("bets/$id"))
+                .applySchedulers()
+                .autoDisposable(AndroidLifecycleScopeProvider.from(this))
+                .subscribeBy(onNext = { doc ->
                     if (doc == null || !doc.exists()) {
                         state.postValue(state.v.copy(step = SCORE))
                         Toast.makeText(context, "Unable to load bet! wtf", Toast.LENGTH_SHORT).show()
-                        return@addSnapshotListener
+                        return@subscribeBy
                     }
 
                     val bet = doc.toObject(FirebaseBet::class.java)!!.copy(id = doc.id)
                     state.postValue(state.v.copy(step = LIST, bet = bet))
-                }
+                }, onError = {
+                    Toast.makeText(context, "Unable to load bet!", Toast.LENGTH_SHORT).show()
+                    Log.w("loadBet", it)
+                })
     }
 
     private fun updateView(state: MatchViewState) {

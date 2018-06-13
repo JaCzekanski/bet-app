@@ -5,14 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/navHostFragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        app:navGraph="@navigation/navigation"
-        app:defaultNavHost="true"
         android:layout_marginBottom="@dimen/bottom_nav_height"/>
+    <!--<fragment-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/navHostFragment"-->
+        <!--android:name="androidx.navigation.fragment.NavHostFragment"-->
+        <!--app:navGraph="@navigation/navigation"-->
+        <!--app:defaultNavHost="true"-->
+        <!--android:layout_marginBottom="@dimen/bottom_nav_height"/>-->
     <!--<FrameLayout-->
         <!--android:id="@+id/container"-->
         <!--android:layout_width="match_parent"-->
