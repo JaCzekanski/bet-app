@@ -108,6 +108,8 @@
                 android:backgroundTint="@color/colorAccent"
                 android:text="Typuj"
                 android:textSize="14sp"
+                android:visibility="gone"
+                tools:visibility="visible"
                 app:fontFamily="@font/atletico_bold"/>
 
         </LinearLayout>

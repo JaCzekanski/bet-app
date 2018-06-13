@@ -38,11 +38,15 @@ class MatchView @JvmOverloads constructor(
                 .apply(com.bumptech.glide.request.RequestOptions.circleCropTransform())
                 .into(flag2)
 
-        if (callback == null) {
-            button.hide()
+        if (match.state == Match.StateBefore) {
+            if (callback == null) {
+                button.hide()
+            } else {
+                button.show()
+                button.setOnClickListener { callback() }
+            }
         } else {
-            button.show()
-            button.setOnClickListener { callback() }
+            button.hide()
         }
 
         val gameScore = match.score?.scoreToPair() ?: kotlin.Pair(0, 0)

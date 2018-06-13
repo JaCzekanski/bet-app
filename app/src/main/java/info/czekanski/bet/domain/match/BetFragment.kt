@@ -1,45 +1,48 @@
 package info.czekanski.bet.domain.match
 
-import android.arch.lifecycle.*
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
-import android.content.*
-import android.net.*
+import android.content.Intent
+import android.net.Uri
 import android.os.*
-import android.support.v4.app.*
-import android.util.*
+import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.*
-import android.widget.*
+import android.widget.Toast
 import com.google.firebase.dynamiclinks.*
-import com.google.firebase.firestore.*
-import com.uber.autodispose.android.lifecycle.*
-import com.uber.autodispose.kotlin.*
+import com.google.firebase.firestore.FirebaseFirestore
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
+import com.uber.autodispose.kotlin.autoDisposable
 import durdinapps.rxfirebase2.*
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.home.utils.*
-import info.czekanski.bet.domain.match.MatchViewState.Step.*
-import info.czekanski.bet.domain.match.summary.*
+import info.czekanski.bet.domain.home.utils.ItemDecorator
+import info.czekanski.bet.domain.match.BetViewState.Step.*
+import info.czekanski.bet.domain.match.summary.SummaryAdapter
 import info.czekanski.bet.domain.match.summary.cells.*
 import info.czekanski.bet.misc.*
-import info.czekanski.bet.model.*
 import info.czekanski.bet.network.*
-import info.czekanski.bet.network.firebase.model.*
-import info.czekanski.bet.network.model.*
-import info.czekanski.bet.user.*
+import info.czekanski.bet.network.firebase.model.FirebaseBet
+import info.czekanski.bet.network.model.Bet
+import info.czekanski.bet.repository.*
+import info.czekanski.bet.user.UserProvider
 import io.reactivex.*
-import io.reactivex.rxkotlin.*
-import kotlinx.android.parcel.*
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_bet.*
 import kotlinx.android.synthetic.main.layout_match_bid.*
 import kotlinx.android.synthetic.main.layout_match_score.*
 
 class BetFragment : Fragment() {
+    private val betRepository by lazy { BetRepository.instance }
+    private val matcheRepository by lazy { MatchRepository.instance }
+    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
+    private val nicknameCache by lazy { NicknameCache.instance }
     private val userProvider by lazy { UserProvider.instance }
     private val firestore by lazy { FirebaseFirestore.getInstance() }
     private val betService: BetService by lazy { BetService.instance }
-
     private val arg by lazy { getArgument<Argument>() }
-
-    private val state: MutableLiveData<MatchViewState> = MutableLiveData()
+    private val state: MutableLiveData<BetViewState> = MutableLiveData()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_bet, container, false)
@@ -60,9 +63,9 @@ class BetFragment : Fragment() {
         }
 
         initViews()
-        state.observe(this, Observer<MatchViewState> { if (it != null) updateView(it) })
+        state.observe(this, Observer<BetViewState> { if (it != null) updateView(it) })
 
-        state.postValue(MatchViewState(step = BID))
+        state.setValue(BetViewState(step = BID))
     }
 
     private fun initToolbar() {
@@ -72,50 +75,52 @@ class BetFragment : Fragment() {
 
     private fun initViews() {
         buttonMinus.setOnClickListener {
-            if (state.v.bid > 0) state.postValue(state.v.copy(bid = state.v.bid - 5))
+            if (state.v.bid > 0) state.setValue(state.v.copy(bid = state.v.bid - 5))
         }
         buttonPlus.setOnClickListener {
-            if (state.v.bid < 100) state.postValue(state.v.copy(bid = state.v.bid + 5))
+            if (state.v.bid < 100) state.setValue(state.v.copy(bid = state.v.bid + 5))
         }
         buttonAccept.setOnClickListener {
-            state.postValue(state.v.copy(step = SCORE))
+            state.setValue(state.v.copy(step = SCORE))
         }
 
         buttonMinus1.setOnClickListener {
-            if (state.v.score.first > 0) state.postValue(state.v.updateScore(first = state.v.score.first - 1))
+            if (state.v.score.first > 0) state.setValue(state.v.updateScore(first = state.v.score.first - 1))
         }
         buttonPlus1.setOnClickListener {
-            if (state.v.score.first < 9) state.postValue(state.v.updateScore(first = state.v.score.first + 1))
+            if (state.v.score.first < 9) state.setValue(state.v.updateScore(first = state.v.score.first + 1))
         }
 
         buttonMinus2.setOnClickListener {
-            if (state.v.score.second > 0) state.postValue(state.v.updateScore(second = state.v.score.second - 1))
+            if (state.v.score.second > 0) state.setValue(state.v.updateScore(second = state.v.score.second - 1))
         }
         buttonPlus2.setOnClickListener {
-            if (state.v.score.second < 9) state.postValue(state.v.updateScore(second = state.v.score.second + 1))
+            if (state.v.score.second < 9) state.setValue(state.v.updateScore(second = state.v.score.second + 1))
         }
         buttonAccept2.setOnClickListener {
             val s = state.v
             if (s.match == null) return@setOnClickListener
             if (s.bet == null) {
                 betService.api.createBet(s.match.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
-                        .doOnSubscribe { this.state.postValue(this.state.v.copy(step = LIST, showLoader = true)) }
-                        .doFinally { this.state.postValue(this.state.v.copy(showLoader = false)) }
+                        .doOnSubscribe { this.state.setValue(this.state.v.copy(step = LIST, showLoader = true)) }
+                        .doFinally { this.state.setValue(this.state.v.copy(showLoader = false)) }
                         .applySchedulers()
+                        .autoDisposable(scopeProvider)
                         .subscribeBy(onSuccess = { result ->
                             if (state.v.bet == null) {
                                 loadBet(result.id)
                             }
                         }, onError = {
-                            state.postValue(state.v.copy(step = BID))
+                            state.setValue(state.v.copy(step = BID))
                             Toast.makeText(context, "Unable to create bet!", Toast.LENGTH_SHORT).show()
                             Log.w("CreateBet", it)
                         })
             } else {
                 betService.api.updateBet(s.bet.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
-                        .doOnSubscribe { this.state.postValue(this.state.v.copy(showLoader = true)) }
-                        .doFinally { this.state.postValue(this.state.v.copy(showLoader = false)) }
+                        .doOnSubscribe { this.state.setValue(this.state.v.copy(showLoader = true)) }
+                        .doFinally { this.state.setValue(this.state.v.copy(showLoader = false)) }
                         .applySchedulers()
+                        .autoDisposable(scopeProvider)
                         .subscribeBy(onError = {
                             Toast.makeText(context, "Unable to update bet!", Toast.LENGTH_SHORT).show()
                             Log.w("UpdateBet", it)
@@ -125,7 +130,7 @@ class BetFragment : Fragment() {
 
         buttonEdit.setOnClickListener {
             if (state.v.step == LIST) {
-                state.postValue(state.v.copy(step = BID))
+                state.setValue(state.v.copy(step = BID))
             }
         }
 
@@ -133,41 +138,65 @@ class BetFragment : Fragment() {
     }
 
     private fun loadMatch(matchId: String) {
-        RxFirestore.observeDocumentRef(firestore.collection("matches").document(matchId))
-                .filter { it.exists() }
-                .map { it.toObject(Match::class.java)!!.copy(id = it.id) }
-                .applySchedulers()
-                .autoDisposable(AndroidLifecycleScopeProvider.from(this))
+        matcheRepository.observeMatch(matchId)
+                .autoDisposable(scopeProvider)
                 .subscribeBy(
-                        onNext = { state.postValue(state.v.copy(match = it)) },
-                        onError = { Log.e("MatchFragment", "getMatch", it) }
+                        onNext = { state.setValue(state.v.copy(match = it)) },
+                        onError = {
+                            Toast.makeText(context, "Unable to load match!", Toast.LENGTH_SHORT).show()
+                            Log.e("MatchFragment", "getMatch", it)
+                        }
                 )
     }
 
-    private fun loadBet(id: String) {
-        RxFirestore.observeDocumentRef(firestore.collection("bets").document(id))
-                .applySchedulers()
-                .autoDisposable(AndroidLifecycleScopeProvider.from(this))
-                .subscribeBy(onNext = { doc ->
-                    if (doc == null || !doc.exists()) {
-                        state.postValue(state.v.copy(step = SCORE))
-                        Toast.makeText(context, "Unable to load bet! wtf", Toast.LENGTH_SHORT).show()
-                        return@subscribeBy
-                    }
-
-                    val bet = doc.toObject(FirebaseBet::class.java)!!.copy(id = doc.id)
-                    state.postValue(state.v.copy(step = LIST, bet = bet))
-
-                    if (state.v.match == null) {
-                        loadMatch(bet.matchId)
-                    }
+    private fun loadBet(betId: String) {
+        betRepository.observeBet(betId)
+                .autoDisposable(scopeProvider)
+                .subscribeBy(onNext = { bet ->
+                    state.value = state.v.copy(step = LIST, bet = bet)
+                    loadNicknames(bet)
+                    if (state.v.match == null) loadMatch(bet.matchId)
                 }, onError = {
                     Toast.makeText(context, "Unable to load bet!", Toast.LENGTH_SHORT).show()
                     Log.w("loadBet", it)
                 })
     }
 
-    private fun updateView(state: MatchViewState) {
+    private fun loadNicknames(bet: FirebaseBet) {
+        val nicknames = state.v.nicknames
+
+        var flowable: Flowable<Pair<String, String?>> = Flowable.empty()
+
+        bet.bets.keys.forEach { userId ->
+            if (!nicknames.containsKey(userId)) {
+                if (nicknameCache.map.containsKey(userId)) {
+                    state.setValue(state.v.updateNickname(userId, nicknameCache.map[userId]))
+                } else {
+                    flowable = flowable.mergeWith(loadNickname(userId).toFlowable())
+                }
+            }
+        }
+
+        flowable
+                .autoDisposable(scopeProvider)
+                .subscribeBy(onNext = {
+                    val (userId, nick) = it
+                    nicknameCache.map[userId] = nick
+                    state.setValue(state.v.updateNickname(userId, nick))
+                }, onError = {
+                    Log.e("LoadNicknames", "User ...", it)
+                })
+
+    }
+
+    private fun loadNickname(userId: String): Maybe<Pair<String, String?>> {
+        return RxFirestore.getDocument(firestore.collection("users").document(userId))
+                .map { Pair(userId, it.getString("nick")) }
+                .applySchedulers()
+    }
+
+
+    private fun updateView(state: BetViewState) {
         // Misc
         if (state.match == null) {
             viewMatch.invisible()
@@ -205,9 +234,9 @@ class BetFragment : Fragment() {
                     state.bet.bets.forEach {
                         val userId = it.key
                         val betEntry = it.value
-
                         val score = betEntry.score.scoreToPair() ?: return@forEach
-                        cells += EntryCell(userId, score)
+
+                        cells += EntryCell(state.nicknames.getOrDefault(userId, ". . ."), score)
                     }
 
                     // Get user id and find his bet
@@ -225,8 +254,8 @@ class BetFragment : Fragment() {
                     when (it) {
                         is InviteCell -> {
                             createShareLink()
-                                    .doOnSubscribe { this.state.postValue(this.state.v.copy(showLoader = true)) }
-                                    .doFinally { this.state.postValue(this.state.v.copy(showLoader = false)) }
+                                    .doOnSubscribe { this.state.setValue(this.state.v.copy(showLoader = true)) }
+                                    .doFinally { this.state.setValue(this.state.v.copy(showLoader = false)) }
                                     .subscribeBy(onSuccess = {
                                         openShareWindow(it.shortLink)
                                     }, onError = {
