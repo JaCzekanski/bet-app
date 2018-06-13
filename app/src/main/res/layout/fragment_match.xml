@@ -31,10 +31,13 @@
     </android.support.v7.widget.Toolbar>
 
     <include
+        android:id="@+id/layoutMatch"
         layout="@layout/layout_match"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-8dp"/>
+        android:layout_marginTop="-8dp"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -55,8 +58,8 @@
             android:layout_gravity="right"
             android:layout_marginTop="-60dp"
             android:layout_marginRight="-80dp"
-            app:tint="#07000000"
-            app:srcCompat="@drawable/ic_ball"/>
+            app:srcCompat="@drawable/ic_ball"
+            app:tint="#07000000"/>
 
         <include
             android:id="@+id/layoutBid"

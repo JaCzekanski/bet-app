@@ -7,4 +7,7 @@
     <color name="iconInactive">#80333657</color>
     <color name="darkBackground">#333657</color>
     <color name="yellow">#f2e4f33a</color>
+    <color name="textInactive">#1affffff</color>
+    <color name="textActive">#ffffff</color>
+    <color name="lightGrey">#60ffffff</color>
 </resources>

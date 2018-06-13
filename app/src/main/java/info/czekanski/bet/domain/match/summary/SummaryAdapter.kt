@@ -21,7 +21,7 @@ class SummaryAdapter(
         TYPE_ENTRY -> EntryViewHolder(parent.inflate(R.layout.holder_summary_entry))
         TYPE_SUMMARY -> SummaryViewHolder(parent.inflate(R.layout.holder_summary_summary))
         TYPE_NOTE -> SummaryViewHolder(parent.inflate(R.layout.holder_summary_note))
-        TYPE_INVITE -> InviteViewHolder(parent.inflate(R.layout.holder_summary_invite))
+        TYPE_INVITE -> InviteViewHolder(parent.inflate(R.layout.holder_summary_invite), callback)
         TYPE_LOADER -> StaticViewHolder(parent.inflate(R.layout.holder_summary_loader))
         else -> throw RuntimeException("Unknown viewType $viewType for MatchesAdapter")
     }

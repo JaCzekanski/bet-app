@@ -31,7 +31,8 @@ class HomeFragment : Fragment() {
     val userProvider by lazy { UserProvider.instance }
     private var matchesAdapter = MatchesAdapter(callback = {
         when (it) {
-            is MatchCell -> goToMatchView(it.match)
+            is MatchCell -> goToMatchView(MatchFragment.Argument(matchId = it.match.id))
+            is BetCell -> goToMatchView(MatchFragment.Argument(betId = it.bet.id))
         }
     })
 
@@ -53,7 +54,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadMatchesAndBets() {
-        val betsFlowable = RxFirestore.observeQueryRef(firestore.collection("bets").whereEqualTo("users.8764327423567", true))
+        val betsFlowable = RxFirestore.observeQueryRef(firestore.collection("bets").whereEqualTo("users.${userProvider.userId!!}", true))
                 .map {
                     it.documents
                             .filterNotNull()
@@ -102,10 +103,10 @@ class HomeFragment : Fragment() {
                 })
     }
 
-    private fun goToMatchView(match: Match) {
+    private fun goToMatchView(arg: MatchFragment.Argument) {
 //        findNavController().navigate(R.id.actionOpenMatch, bundleOf(match))
         requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MatchFragment().withArgument(match))
+                .replace(R.id.container, MatchFragment().withArgument(arg))
                 .addToBackStack(null)
                 .commitAllowingStateLoss()
     }

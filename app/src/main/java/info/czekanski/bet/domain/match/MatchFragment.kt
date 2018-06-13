@@ -1,30 +1,29 @@
 package info.czekanski.bet.domain.match
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.dynamiclinks.DynamicLink
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.google.firebase.firestore.FirebaseFirestore
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import durdinapps.rxfirebase2.RxFirestore
+import durdinapps.rxfirebase2.RxHandler
 import info.czekanski.bet.R
-import info.czekanski.bet.R.id.bet
-import info.czekanski.bet.domain.home.MatchesAdapter
-import info.czekanski.bet.domain.home.cells.MatchCell
-import info.czekanski.bet.domain.home.cells.WelcomeCell
 import info.czekanski.bet.domain.home.utils.ItemDecorator
 import info.czekanski.bet.domain.home.view_holder.MatchViewHolder
 import info.czekanski.bet.domain.home.view_holder.MatchViewHolder.Companion.getCountryName
@@ -38,22 +37,28 @@ import info.czekanski.bet.misc.subscribeBy
 import info.czekanski.bet.model.Match
 import info.czekanski.bet.network.BetService
 import info.czekanski.bet.network.firebase.model.FirebaseBet
-import info.czekanski.bet.network.firebase.model.FirebaseBetEntry
 import info.czekanski.bet.network.model.Bet
+import info.czekanski.bet.network.scoreToPair
+import info.czekanski.bet.user.UserProvider
+import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_match.*
+import kotlinx.android.synthetic.main.holder_summary_entry.*
 import kotlinx.android.synthetic.main.layout_match.*
 import kotlinx.android.synthetic.main.layout_match_bid.*
 import kotlinx.android.synthetic.main.layout_match_score.*
 
 class MatchFragment : Fragment() {
-    val firestore by lazy { FirebaseFirestore.getInstance() }
-    val betService: BetService by lazy { BetService.instance }
+    private val userProvider by lazy { UserProvider.instance }
+    private val firestore by lazy { FirebaseFirestore.getInstance() }
+    private val betService: BetService by lazy { BetService.instance }
 
-    val match by lazy { getArgument<Match>() }
-    val state: MutableLiveData<MatchViewState> = MutableLiveData()
+    private val arg by lazy { getArgument<Argument>() }
+
+    private val state: MutableLiveData<MatchViewState> = MutableLiveData()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_match, container, false)
@@ -63,9 +68,17 @@ class MatchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initToolbar()
 
-        bindMatch(match)
-        initViews()
+        val (matchId, betId) = arg
 
+        if (matchId == null && betId == null) {
+            throw RuntimeException("Invalid parameters for MatchFragment - pass either matchId or betId")
+        } else if (matchId != null) {
+            loadMatch(matchId)
+        } else if (betId != null) {
+            loadBet(betId)
+        }
+
+        initViews()
         state.observe(this, Observer<MatchViewState> { if (it != null) updateView(it) })
 
         state.postValue(MatchViewState(step = BID))
@@ -87,7 +100,6 @@ class MatchFragment : Fragment() {
             state.postValue(state.v.copy(step = SCORE))
         }
 
-
         buttonMinus1.setOnClickListener {
             if (state.v.score.first > 0) state.postValue(state.v.updateScore(first = state.v.score.first - 1))
         }
@@ -102,8 +114,10 @@ class MatchFragment : Fragment() {
             if (state.v.score.second < 9) state.postValue(state.v.updateScore(second = state.v.score.second + 1))
         }
         buttonAccept2.setOnClickListener {
-            if (state.v.bet == null) {
-                betService.api.createBet(match.id, Bet(state.v.bid, state.v.scoreAsString()), "8764327423567")
+            val s = state.v
+            if (s.match == null) return@setOnClickListener
+            if (s.bet == null) {
+                betService.api.createBet(s.match.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnSubscribe { state.postValue(state.v.copy(step = LIST)) }
@@ -117,7 +131,7 @@ class MatchFragment : Fragment() {
                             Log.w("CreateBet", it)
                         })
             } else {
-                betService.api.updateBet(state.v.bet?.id!!, Bet(state.v.bid, state.v.scoreAsString()), "8764327423567")
+                betService.api.updateBet(s.bet.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(onError = {
@@ -136,8 +150,20 @@ class MatchFragment : Fragment() {
         recyclerView.addItemDecoration(ItemDecorator())
     }
 
+    private fun loadMatch(matchId: String) {
+        RxFirestore.observeDocumentRef(firestore.collection("matches").document(matchId))
+                .filter { it.exists() }
+                .map { it.toObject(Match::class.java)!!.copy(id = it.id) }
+                .applySchedulers()
+                .autoDisposable(AndroidLifecycleScopeProvider.from(this))
+                .subscribeBy(
+                        onNext = { state.postValue(state.v.copy(match = it)) },
+                        onError = { Log.e("MatchFragment", "getMatch", it) }
+                )
+    }
+
     private fun loadBet(id: String) {
-        RxFirestore.observeDocumentRef(firestore.document("bets/$id"))
+        RxFirestore.observeDocumentRef(firestore.collection("bets").document(id))
                 .applySchedulers()
                 .autoDisposable(AndroidLifecycleScopeProvider.from(this))
                 .subscribeBy(onNext = { doc ->
@@ -149,6 +175,10 @@ class MatchFragment : Fragment() {
 
                     val bet = doc.toObject(FirebaseBet::class.java)!!.copy(id = doc.id)
                     state.postValue(state.v.copy(step = LIST, bet = bet))
+
+                    if (state.v.match == null) {
+                        loadMatch(bet.matchId)
+                    }
                 }, onError = {
                     Toast.makeText(context, "Unable to load bet!", Toast.LENGTH_SHORT).show()
                     Log.w("loadBet", it)
@@ -157,6 +187,11 @@ class MatchFragment : Fragment() {
 
     private fun updateView(state: MatchViewState) {
         // Misc
+        if (state.match == null) {
+            layoutMatch.visibility = View.INVISIBLE
+        } else {
+            bindMatch(state.match)
+        }
         imageBall.show(state.step != LIST)
         buttonEdit.show(state.step == LIST && state.bet != null)
 
@@ -174,7 +209,6 @@ class MatchFragment : Fragment() {
                 textScore2.text = "${state.score.second}"
             }
             LIST -> {
-
                 val cells: MutableList<Cell>
                 if (state.bet == null) {
                     cells = mutableListOf(LoaderCell())
@@ -188,26 +222,44 @@ class MatchFragment : Fragment() {
                         val userId = it.key
                         val betEntry = it.value
 
-                        val score = betEntry.scoreToPair() ?: return@forEach
+                        val score = betEntry.score.scoreToPair() ?: return@forEach
                         cells += EntryCell(userId, score)
                     }
 
                     // Get user id and find his bet
+                    val stake = state.bet.bets[userProvider.userId]?.bid ?: 0
 
                     val jackpot = state.bet.bets.values
                             .mapNotNull { it.bid }
                             .reduce { acc, i -> acc + i }
 
                     cells += SeparatorCell()
-                    cells += SummaryCell(-1, jackpot)
-                    cells += InviteCell(showText = true)
+                    cells += SummaryCell(stake, jackpot)
+                    cells += InviteCell(showText = state.bet.bets.size < 2)
                 }
-                recyclerView.adapter = SummaryAdapter(cells)
+                recyclerView.adapter = SummaryAdapter(cells, {
+                    when (it) {
+                        is InviteCell -> {
+                            createShareLink().subscribeBy(onSuccess = {
+                                openShareWindow(it.shortLink)
+                            }, onError = {
+                                Log.e("MatchFragment", "createShareLink", it)
+                            })
+                        }
+                    }
+                })
             }
         }
     }
 
     private fun bindMatch(match: Match) {
+        layoutMatch.show()
+
+        val gameScore = match.score?.scoreToPair() ?: Pair(0, 0)
+
+        score.setTextColor(ContextCompat.getColor(requireContext(), if (match.score != null) R.color.textActive else R.color.textInactive))
+        score.text = "%d - %d".format(gameScore.first, gameScore.second)
+
         date.text = MatchViewHolder.formatter.format(match.date)
         team1.text = getCountryName(match.team1)
         team2.text = getCountryName(match.team2)
@@ -223,9 +275,36 @@ class MatchFragment : Fragment() {
                 .apply(RequestOptions.circleCropTransform())
                 .into(flag2)
 
-        button.visibility = GONE
+        button.visibility = INVISIBLE
     }
 
+    fun createShareLink(): Maybe<ShortDynamicLink> {
+        val betId = state.v.bet?.id ?: return Maybe.error(RuntimeException("No bet id!"))
+
+        val dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(Uri.parse("https://bet.czekanski.info/bet/$betId"))
+                .setDynamicLinkDomain("bet.page.link")
+                .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
+                .setSocialMetaTagParameters(DynamicLink.SocialMetaTagParameters.Builder()
+                        .setTitle("Załóż się")
+                        .setDescription("Pobierz aplikacje i dołącz do zabawy")
+                        .build())
+                .buildShortDynamicLink()
+
+        return Maybe.create<ShortDynamicLink> { emitter -> RxHandler.assignOnTask(emitter, dynamicLink) }
+                .applySchedulers()
+    }
+
+    private fun openShareWindow(link: Uri) {
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.putExtra(Intent.EXTRA_TEXT, link.toString())
+        intent.type = "text/plain"
+        activity?.startActivity(Intent.createChooser(intent, "Udostępnij"))
+    }
+
+    @Parcelize
+    data class Argument(val matchId: String? = null, val betId: String? = null) : Parcelable
 }
 
 
@@ -236,12 +315,6 @@ fun <T : Fragment> T.withArgument(arg: Parcelable): T {
     return this
 }
 
-
-fun <T : Parcelable> bundleOf(arg: T): Bundle {
-    val bundle = Bundle()
-    bundle.putParcelable("ARG", arg)
-    return bundle
-}
 
 fun <T : Parcelable> Fragment.getArgument(): T =
         arguments?.getParcelable("ARG")!!
@@ -257,3 +330,4 @@ fun View.show(visible: Boolean = true) {
 
 val <T : Any> MutableLiveData<T>.v
     get() = value!!
+

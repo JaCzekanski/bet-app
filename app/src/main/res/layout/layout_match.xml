@@ -29,7 +29,7 @@
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="19.06, 17:00"
+            tools:text="19.06, 17:00"
             android:textColor="#b3ffffff"
             android:textSize="14sp"/>
 
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:gravity="center_horizontal"
-                android:text="Polska"
+                tools:text="Polska"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textSize="14sp"/>
         </LinearLayout>
@@ -87,8 +87,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:text="0 - 0"
-                android:textColor="#1affffff"
+                tools:text="0 - 0"
+                android:textColor="@color/textInactive"
                 android:textSize="48sp"
                 app:fontFamily="@font/atletico_medium"/>
 
@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="-10dp"
-                android:text="2 - 1"
+                tools:text="2 - 1"
                 android:textColor="#ffffff"
                 android:textSize="20sp"
                 android:visibility="gone"
@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:gravity="center_horizontal"
-                android:text="Polska"
+                tools:text="Polska"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textSize="14sp"/>
         </LinearLayout>

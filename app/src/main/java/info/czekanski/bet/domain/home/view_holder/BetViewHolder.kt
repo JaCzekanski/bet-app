@@ -1,17 +1,18 @@
 package info.czekanski.bet.domain.home.view_holder
 
 import android.net.Uri
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.bumptech.glide.request.RequestOptions
+import info.czekanski.bet.R
 import info.czekanski.bet.domain.home.Callback
 import info.czekanski.bet.domain.home.cells.BetCell
-import info.czekanski.bet.domain.home.view_holder.MatchViewHolder.Companion.formatter
-import info.czekanski.bet.domain.home.view_holder.MatchViewHolder.Companion.getCountryName
 import info.czekanski.bet.domain.match.hide
 import info.czekanski.bet.domain.match.show
 import info.czekanski.bet.misc.GlideApp
 import info.czekanski.bet.network.firebase.model.FirebaseBetEntry
+import info.czekanski.bet.user.UserProvider
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.holder_home_bet.*
 import kotlinx.android.synthetic.main.layout_match.*
@@ -20,6 +21,7 @@ import java.util.*
 
 
 class BetViewHolder(override val containerView: View, val callback: Callback) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    private val userProvider by lazy { UserProvider.instance }
 
     fun bind(cell: BetCell) {
         val match = cell.bet.match
@@ -40,17 +42,22 @@ class BetViewHolder(override val containerView: View, val callback: Callback) : 
                     .into(flag2)
 
             score.text = match.score ?: "0 - 0"
+            score.setTextColor(ContextCompat.getColor(containerView.context, if (match.score != null) R.color.textActive else R.color.textInactive))
         }
 
         myScore.show()
 
-        val userBet = cell.bet.bets["8764327423567"]
+        containerView.setOnClickListener {
+            callback(cell)
+        }
+
+        val userBet = cell.bet.bets[userProvider.userId]
         if (cell.bet.bets.size == 1 && userBet != null) {
             viewSeparator.hide()
             layoutBottom.hide()
             buttonInvite.show()
             buttonInvite.setOnClickListener {
-
+                callback(cell) // TODO: Change me
             }
         } else {
             viewSeparator.show()
@@ -63,7 +70,7 @@ class BetViewHolder(override val containerView: View, val callback: Callback) : 
             textJackpot.text = formatJackpot(cell.bet.bets.values)
 
             buttonMore.setOnClickListener {
-
+                callback(cell)
             }
         }
 
