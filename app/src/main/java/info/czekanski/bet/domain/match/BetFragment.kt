@@ -8,7 +8,6 @@ import android.os.*
 import android.support.v4.app.*
 import android.util.*
 import android.view.*
-import android.view.View.*
 import android.widget.*
 import com.google.firebase.dynamiclinks.*
 import com.google.firebase.firestore.*
@@ -27,15 +26,13 @@ import info.czekanski.bet.network.firebase.model.*
 import info.czekanski.bet.network.model.*
 import info.czekanski.bet.user.*
 import io.reactivex.*
-import io.reactivex.android.schedulers.*
 import io.reactivex.rxkotlin.*
-import io.reactivex.schedulers.*
 import kotlinx.android.parcel.*
-import kotlinx.android.synthetic.main.fragment_match.*
+import kotlinx.android.synthetic.main.fragment_bet.*
 import kotlinx.android.synthetic.main.layout_match_bid.*
 import kotlinx.android.synthetic.main.layout_match_score.*
 
-class MatchFragment : Fragment() {
+class BetFragment : Fragment() {
     private val userProvider by lazy { UserProvider.instance }
     private val firestore by lazy { FirebaseFirestore.getInstance() }
     private val betService: BetService by lazy { BetService.instance }
@@ -45,7 +42,7 @@ class MatchFragment : Fragment() {
     private val state: MutableLiveData<MatchViewState> = MutableLiveData()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_match, container, false)
+        return inflater.inflate(R.layout.fragment_bet, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -102,9 +99,9 @@ class MatchFragment : Fragment() {
             if (s.match == null) return@setOnClickListener
             if (s.bet == null) {
                 betService.api.createBet(s.match.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnSubscribe { state.postValue(state.v.copy(step = LIST)) }
+                        .doOnSubscribe { this.state.postValue(this.state.v.copy(step = LIST, showLoader = true)) }
+                        .doFinally { this.state.postValue(this.state.v.copy(showLoader = false)) }
+                        .applySchedulers()
                         .subscribeBy(onSuccess = { result ->
                             if (state.v.bet == null) {
                                 loadBet(result.id)
@@ -116,8 +113,9 @@ class MatchFragment : Fragment() {
                         })
             } else {
                 betService.api.updateBet(s.bet.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe { this.state.postValue(this.state.v.copy(showLoader = true)) }
+                        .doFinally { this.state.postValue(this.state.v.copy(showLoader = false)) }
+                        .applySchedulers()
                         .subscribeBy(onError = {
                             Toast.makeText(context, "Unable to update bet!", Toast.LENGTH_SHORT).show()
                             Log.w("UpdateBet", it)
@@ -179,6 +177,7 @@ class MatchFragment : Fragment() {
         }
         imageBall.show(state.step != LIST)
         buttonEdit.show(state.step == LIST && state.bet != null)
+        progress.show(state.showLoader)
 
         // Steps
         layoutBid.show(state.step == BID)
@@ -196,7 +195,7 @@ class MatchFragment : Fragment() {
             LIST -> {
                 val cells: MutableList<Cell>
                 if (state.bet == null) {
-                    cells = mutableListOf(LoaderCell())
+                    cells = mutableListOf()
                 } else {
                     cells = mutableListOf(
                             HeaderCell(),
@@ -225,11 +224,14 @@ class MatchFragment : Fragment() {
                 recyclerView.adapter = SummaryAdapter(cells, {
                     when (it) {
                         is InviteCell -> {
-                            createShareLink().subscribeBy(onSuccess = {
-                                openShareWindow(it.shortLink)
-                            }, onError = {
-                                Log.e("MatchFragment", "createShareLink", it)
-                            })
+                            createShareLink()
+                                    .doOnSubscribe { this.state.postValue(this.state.v.copy(showLoader = true)) }
+                                    .doFinally { this.state.postValue(this.state.v.copy(showLoader = false)) }
+                                    .subscribeBy(onSuccess = {
+                                        openShareWindow(it.shortLink)
+                                    }, onError = {
+                                        Log.e("MatchFragment", "createShareLink", it)
+                                    })
                         }
                     }
                 })

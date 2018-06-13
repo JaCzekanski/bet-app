@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                 val betId = result.groupValues[1]
 
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, MatchFragment().withArgument(MatchFragment.Argument(betId = betId)))
+                        .replace(R.id.container, BetFragment().withArgument(BetFragment.Argument(betId = betId)))
                         .commitAllowingStateLoss()
 
                 return

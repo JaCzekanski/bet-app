@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/matchFragment"
-        android:name="info.czekanski.bet.domain.match.MatchFragment"
+        android:name="info.czekanski.bet.domain.match.BetFragment"
         android:label="matchFragment"
-        tools:layout="@layout/fragment_match"/>
+        tools:layout="@layout/fragment_bet"/>
 </navigation>

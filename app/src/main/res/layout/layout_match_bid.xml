@@ -12,7 +12,7 @@
               android:paddingBottom="26dp"
               android:clipChildren="false"
               android:clipToPadding="false"
-              tools:showIn="@layout/fragment_match">
+              tools:showIn="@layout/fragment_bet">
 
     <TextView
         android:layout_width="wrap_content"

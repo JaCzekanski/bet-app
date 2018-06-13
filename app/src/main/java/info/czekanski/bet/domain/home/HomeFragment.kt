@@ -29,8 +29,8 @@ class HomeFragment : Fragment() {
     val userProvider by lazy { UserProvider.instance }
     private var matchesAdapter = MatchesAdapter(callback = {
         when (it) {
-            is MatchCell -> goToMatchView(MatchFragment.Argument(matchId = it.match.id))
-            is BetCell -> goToMatchView(MatchFragment.Argument(betId = it.bet.id))
+            is MatchCell -> goToMatchView(BetFragment.Argument(matchId = it.match.id))
+            is BetCell -> goToMatchView(BetFragment.Argument(betId = it.bet.id))
         }
     })
 
@@ -101,10 +101,10 @@ class HomeFragment : Fragment() {
                 })
     }
 
-    private fun goToMatchView(arg: MatchFragment.Argument) {
+    private fun goToMatchView(arg: BetFragment.Argument) {
 //        findNavController().navigate(R.id.actionOpenMatch, bundleOf(match))
         requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MatchFragment().withArgument(arg))
+                .replace(R.id.container, BetFragment().withArgument(arg))
                 .addToBackStack(null)
                 .commitAllowingStateLoss()
     }

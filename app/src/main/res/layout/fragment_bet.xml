@@ -79,6 +79,21 @@
             android:visibility="gone"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             tools:listitem="@layout/holder_summary_entry"/>
+
+        <FrameLayout
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#a0000000"
+            android:clickable="true"
+            android:visibility="gone"
+            android:focusable="true">
+
+            <ProgressBar
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"/>
+        </FrameLayout>
     </FrameLayout>
 
 </LinearLayout>

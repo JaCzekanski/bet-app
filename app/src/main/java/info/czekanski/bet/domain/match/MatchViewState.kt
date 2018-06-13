@@ -8,8 +8,10 @@ data class MatchViewState(
         val bid: Int = 0,
         val score: Pair<Int, Int> = Pair(0, 0),
         val bet: FirebaseBet? = null,
-        val match: Match? = null
+        val match: Match? = null,
+        val showLoader: Boolean = false
 ) {
+
     enum class Step {
         BID, SCORE, LIST
     }
