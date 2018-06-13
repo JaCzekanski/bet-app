@@ -13,6 +13,7 @@ import com.uber.autodispose.android.lifecycle.*
 import com.uber.autodispose.kotlin.*
 import durdinapps.rxfirebase2.*
 import info.czekanski.bet.R
+import info.czekanski.bet.R.id.recyclerView
 import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.domain.home.utils.*
 import info.czekanski.bet.domain.match.*
@@ -39,11 +40,7 @@ class HomeFragment : Fragment() {
         initRecyclerView()
 
         val viewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
-        viewModel.getCells().observe(this, Observer {
-            if (it != null) {
-                matchesAdapter.setCells(it)
-            }
-        })
+        viewModel.getCells().safeObserve(this, { matchesAdapter.setCells(it) })
     }
 
     private fun initRecyclerView() {
