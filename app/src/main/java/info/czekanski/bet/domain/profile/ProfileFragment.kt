@@ -25,6 +25,11 @@ class ProfileFragment : Fragment() {
                     Intent(context, LoginActivity::class.java)
             )
         }
+
+        buttonDeleteAccount.setOnClickListener{
+
+        }
+
     }
 
 }

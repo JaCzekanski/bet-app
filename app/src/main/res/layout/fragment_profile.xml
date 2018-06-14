@@ -53,4 +53,22 @@
         android:layout_height="1dp"
         android:background="#16000000"/>
 
+    <TextView
+        android:id="@+id/buttonDeleteAccount"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Usuń konto"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:drawablePadding="16dp"
+        android:textColor="#283149"
+        android:textSize="20sp"
+        android:drawableLeft="@drawable/ic_delete_forever_black_24dp"
+        android:gravity="center_vertical"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#16000000"/>
+
 </LinearLayout>

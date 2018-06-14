@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateTo(fragment: Fragment) {
+        supportFragmentManager. popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commitAllowingStateLoss()

@@ -33,8 +33,8 @@ class BetViewModel : ViewModel() {
         subs.clear()
     }
 
-    fun getState(arg: BetFragment.Argument): LiveData<BetViewState> {
-        if (state.value == null) {
+    fun getState(arg: BetFragment.Argument? = null): LiveData<BetViewState> {
+        if (state.value == null && arg != null) {
             val (matchId, betId) = arg
 
             if (matchId == null && betId == null) {
@@ -201,11 +201,13 @@ class BetViewModel : ViewModel() {
 
         val dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLink(Uri.parse("https://bet.czekanski.info/bet/$betId"))
-                .setDynamicLinkDomain("bet.page.link")
+                .setDynamicLinkDomain("uzz4b.app.goo.gl")
+//                .setDynamicLinkDomain("bet.page.link")
                 .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
                 .setSocialMetaTagParameters(DynamicLink.SocialMetaTagParameters.Builder()
-                        .setTitle("Załóż się")
+                        .setTitle("Załóż się kto wygra")
                         .setDescription("Pobierz aplikacje i dołącz do zabawy")
+                        .setImageUrl(Uri.parse("https://i.imgur.com/GwVqwJ0.png"))
                         .build())
                 .buildShortDynamicLink()
 

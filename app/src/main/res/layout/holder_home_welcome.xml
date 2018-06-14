@@ -5,7 +5,8 @@
               android:layout_height="wrap_content"
               android:orientation="vertical"
               android:paddingLeft="32dp"
-              android:paddingRight="32dp">
+              android:paddingRight="32dp"
+              android:layout_marginBottom="64dp">
 
     <TextView
         android:id="@+id/textNick"
@@ -20,10 +21,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
         android:layout_marginTop="6dp"
         android:text="Typuj wyniki spotkań razem ze swoimi znajomymi."
         android:textColor="#283149"
         android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/textOpenLink"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:alpha="0.5"
+        android:text="Protip: Otwórz linka od znajomego, aby dołączyć do zakładu"
+        android:textColor="#283149"
+        android:textSize="16sp"/>
 
 </LinearLayout>

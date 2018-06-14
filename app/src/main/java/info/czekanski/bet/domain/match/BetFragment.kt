@@ -17,6 +17,7 @@ import info.czekanski.bet.misc.*
 import info.czekanski.bet.model.MatchState
 import info.czekanski.bet.network.scoreToPair
 import info.czekanski.bet.user.UserProvider
+import info.czekanski.bet.views.MatchView
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_bet.*
 import kotlinx.android.synthetic.main.layout_match_bid.*
@@ -149,9 +150,17 @@ class BetFragment : Fragment() {
     }
 
     private fun openShareWindow(link: Uri) {
+        val state = viewModel.getState().value
+        var whoPlays = ""
+        if (state?.match != null) {
+            val t1 = MatchView.getCountryName(state.match.team1)
+            val t2 = MatchView.getCountryName(state.match.team2)
+            whoPlays = "($t1 : $t2)"
+        }
+
         val intent = Intent()
         intent.action = Intent.ACTION_SEND
-        intent.putExtra(Intent.EXTRA_TEXT, link.toString())
+        intent.putExtra(Intent.EXTRA_TEXT, "Obstaw kto wygra $whoPlays $link")
         intent.type = "text/plain"
         activity?.startActivity(Intent.createChooser(intent, "Udostępnij"))
     }

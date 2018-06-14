@@ -78,8 +78,8 @@ class MatchView @JvmOverloads constructor(
     companion object {
         val formatter = SimpleDateFormat("H:mm  .  d.MM", Locale.US)
 
-        fun getCountryName(code: String): String {
-            return Locale("", code.toUpperCase()).displayCountry
+        public fun getCountryName(code: String): String {
+            return Locale("", code.toUpperCase()).getDisplayCountry(Locale("PL"))
         }
     }
 }

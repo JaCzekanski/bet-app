@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="kawa w puli"
+            android:text="kasa w puli"
             android:textColor="#8a000000"
             android:textSize="16sp"/>
 
