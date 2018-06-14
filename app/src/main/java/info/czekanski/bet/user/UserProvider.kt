@@ -1,15 +1,13 @@
 package info.czekanski.bet.user
 
 import android.util.Log
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import durdinapps.rxfirebase2.RxFirebaseAuth
-import durdinapps.rxfirebase2.RxFirestore
+import durdinapps.rxfirebase2.*
 import info.czekanski.bet.misc.applySchedulers
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Single
+import io.reactivex.*
 import io.reactivex.rxkotlin.subscribeBy
 
 class UserProvider private constructor(val firestore: FirebaseFirestore, val auth: FirebaseAuth) {
@@ -32,10 +30,26 @@ class UserProvider private constructor(val firestore: FirebaseFirestore, val aut
                 .flatMapCompletable { Completable.complete() }
     }
 
-    fun setNick(nick: String): Completable {
+    fun logout(): Completable {
+        val user = auth.currentUser
+                ?: return Completable.error(RuntimeException("User not logged in"))
+
+        return Completable
+                .create({ emitter -> RxHandlerCompletable.assignOnTask(emitter, user.delete()) })
+                .applySchedulers()
+    }
+
+    fun setNick(nick: String?): Completable {
         val userId = userId ?: return Completable.error(RuntimeException("Not logged in"))
 
-        return RxFirestore.setDocument(firestore.collection("users").document(userId), mapOf("nick" to nick))
+        val document = firestore.collection("users").document(userId)
+        if (nick == null) {
+            return RxFirestore.deleteDocument(document)
+                    .applySchedulers()
+                    .doOnEvent { this.nick = nick }
+        }
+
+        return RxFirestore.setDocument(document, mapOf("nick" to nick))
                 .applySchedulers()
                 .doOnEvent { this.nick = nick }
     }
