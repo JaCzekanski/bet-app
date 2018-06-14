@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/layout"
+              android:layout_width="128dp"
+              android:layout_height="128dp"
+              android:foreground="?selectableItemBackgroundBorderless"
+              android:gravity="center"
+              android:orientation="vertical"
+              android:padding="8dp">
+    <!-- tools:background="#e4f33a" -->
+
+    <ImageView
+        android:id="@+id/imageAvatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:srcCompat="@drawable/ic_account_circle"/>
+
+    <TextView
+        android:id="@+id/textNick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="Krachtan"
+        android:textColor="@color/textNickActive"
+        android:textSize="16sp"/>
+</LinearLayout>

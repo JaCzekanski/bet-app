@@ -18,6 +18,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:gravity="right">
 
             <ImageView
@@ -85,6 +86,17 @@
             android:orientation="vertical"
             android:visibility="gone"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/holder_summary_entry"/>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/friendsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layoutManager="android.support.v7.widget.StaggeredGridLayoutManager"
+            app:spanCount="3"
             tools:listitem="@layout/holder_summary_entry"/>
 
         <FrameLayout

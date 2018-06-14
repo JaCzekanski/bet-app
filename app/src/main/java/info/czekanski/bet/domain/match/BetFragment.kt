@@ -11,12 +11,13 @@ import android.widget.Toast
 import info.czekanski.bet.R
 import info.czekanski.bet.domain.match.BetViewModel.Action
 import info.czekanski.bet.domain.match.BetViewState.Step.*
+import info.czekanski.bet.domain.match.friends.FriendsAdapter
 import info.czekanski.bet.domain.match.summary.SummaryAdapter
 import info.czekanski.bet.domain.match.summary.cells.*
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.model.MatchState
-import info.czekanski.bet.network.firebase.model.FirebaseBet
 import info.czekanski.bet.network.scoreToPair
+import info.czekanski.bet.repository.Friend
 import info.czekanski.bet.user.UserProvider
 import info.czekanski.bet.views.MatchView
 import kotlinx.android.parcel.Parcelize
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.layout_match_score.*
 class BetFragment : Fragment() {
     private val userProvider by lazy { UserProvider.instance }
     private val arg by lazy { getArgument<Argument>() }
+    private val summaryAdapter = SummaryAdapter(this::listCallback)
 
     private lateinit var viewModel: BetViewModel
 
@@ -42,7 +44,6 @@ class BetFragment : Fragment() {
         initViews()
 
         viewModel.getState(arg).safeObserve(this, { updateView(it) })
-        viewModel.getShareLink().safeObserve(this, { openShareWindow(it.shortLink) })
         viewModel.getToast().safeObserve(this, { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() })
     }
 
@@ -65,6 +66,9 @@ class BetFragment : Fragment() {
 
         buttonDelete.setOnClickListener { showDeleteWarningDialog() }
         buttonEdit.setOnClickListener { viewModel.buttonClicked(Action.EditBet) }
+
+        recyclerView.adapter = summaryAdapter
+
     }
 
     private fun showDeleteWarningDialog() {
@@ -102,6 +106,7 @@ class BetFragment : Fragment() {
         layoutBid.show(state.step == BID)
         layoutScore.show(state.step == SCORE)
         recyclerView.show(state.step == LIST)
+        friendsRecyclerView.show(state.step == FRIENDS)
 
         when (state.step) {
             BID -> {
@@ -112,8 +117,20 @@ class BetFragment : Fragment() {
                 textScore2.text = "${state.score.second}"
             }
             LIST -> {
-                recyclerView.adapter = SummaryAdapter(createSummaryList(state), this::listCallback)
+                summaryAdapter.setCells(createSummaryList(state))
             }
+            FRIENDS -> {
+                friendsRecyclerView.adapter = FriendsAdapter(
+                        listOf(Friend.SHARE) + state.friends,
+                        callback = { friend -> onFriendClicked(friend, state.shareLink) }
+                )
+            }
+        }
+    }
+
+    private fun onFriendClicked(friend: Friend, shareLink: Uri?) {
+        if (friend == Friend.SHARE && shareLink != null) {
+            openShareWindow(shareLink)
         }
     }
 

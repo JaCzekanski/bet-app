@@ -14,18 +14,18 @@ import info.czekanski.bet.repository.*
 import info.czekanski.bet.user.UserProvider
 import io.reactivex.*
 import io.reactivex.disposables.*
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.*
 
 class BetViewModel : ViewModel() {
     private val subs = CompositeDisposable()
     private val betService: BetService by lazy { BetService.instance }
     private val betRepository by lazy { BetRepository.instance }
     private val matchRepository by lazy { MatchRepository.instance }
+    private val friendsRepository by lazy { FriendsRepository.instance }
     private val nicknameCache by lazy { NicknameCache.instance }
     private val userProvider by lazy { UserProvider.instance }
     private val firestore by lazy { FirebaseFirestore.getInstance() }
     private val state = MutableLiveData<BetViewState>()
-    private val shareLink = MutableLiveData<ShortDynamicLink>()
     private val toast = MutableLiveData<String>()
 
     override fun onCleared() {
@@ -49,11 +49,6 @@ class BetViewModel : ViewModel() {
         }
 
         return state
-    }
-
-    fun getShareLink(): LiveData<ShortDynamicLink> {
-        shareLink.value = null
-        return shareLink
     }
 
     fun getToast(): LiveData<String> {
@@ -98,14 +93,23 @@ class BetViewModel : ViewModel() {
                     deleteBet()
                 }
             }
-            Action.Share -> {
-                createShareLink()
+            Action.Share -> action@ {
+                val userId = userProvider.userId ?: return@action
+
+                Singles.zip(friendsRepository.getFriends(userId), createShareLink().toSingle(), { friends, link -> Pair(friends, link) })
                         .doOnSubscribe { state.value = state.v.copy(showLoader = true) }
                         .doFinally { state.value = state.v.copy(showLoader = false) }
-                        .subscribeBy(
-                                onSuccess = { shareLink.value = it },
-                                onError = { Log.e("MatchFragment", "createShareLink", it) }
-                        )
+                        .subscribeBy(onSuccess = {
+                            val (friends, link) = it
+
+                            state.value = state.v.copy(
+                                    friends = friends,
+                                    shareLink = link,
+                                    step = BetViewState.Step.FRIENDS
+                            )
+                        }, onError = {
+                            Log.e("MatchFragment", "createShareLink", it)
+                        })
             }
         }
     }
@@ -217,7 +221,7 @@ class BetViewModel : ViewModel() {
     }
 
 
-    private fun createShareLink(): Maybe<ShortDynamicLink> {
+    private fun createShareLink(): Maybe<Uri> {
         val betId = state.v.bet?.id ?: return Maybe.error(RuntimeException("No bet id!"))
 
         val dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
@@ -233,6 +237,7 @@ class BetViewModel : ViewModel() {
                 .buildShortDynamicLink()
 
         return Maybe.create<ShortDynamicLink> { emitter -> RxHandler.assignOnTask(emitter, dynamicLink) }
+                .map { it.shortLink }
                 .applySchedulers()
     }
 

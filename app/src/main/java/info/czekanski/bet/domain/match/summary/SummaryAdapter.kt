@@ -1,9 +1,13 @@
 package info.czekanski.bet.domain.match.summary
 
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import info.czekanski.bet.R
+import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.domain.match.summary.cells.*
+import info.czekanski.bet.domain.match.summary.cells.HeaderCell
+import info.czekanski.bet.domain.match.summary.cells.LoaderCell
 import info.czekanski.bet.domain.match.summary.view_holder.EntryViewHolder
 import info.czekanski.bet.domain.match.summary.view_holder.InviteViewHolder
 import info.czekanski.bet.domain.match.summary.view_holder.StaticViewHolder
@@ -12,9 +16,14 @@ import info.czekanski.bet.misc.Cell
 import info.czekanski.bet.misc.inflate
 
 class SummaryAdapter(
-        private val cells: List<Cell>,
         private val callback: Callback = {}
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var cells: List<Cell> = listOf()
+
+    init {
+        setHasStableIds(true)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
         TYPE_HEADER -> StaticViewHolder(parent.inflate(R.layout.holder_summary_header))
         TYPE_SEPARATOR -> StaticViewHolder(parent.inflate(R.layout.holder_summary_separator))
@@ -38,7 +47,17 @@ class SummaryAdapter(
     }
 
     override fun getItemId(position: Int): Long {
-        return cells[position].hashCode().toLong()
+        val cell = cells[position]
+        return when (cell) {
+            is HeaderCell -> -1000
+            is SeparatorCell -> -1001
+            is EntryCell -> cell.nick.hashCode().toLong()
+            is SummaryCell -> -1002
+            is NoteCell -> -1003
+            is InviteCell -> -1004
+            is LoaderCell -> -1005
+            else -> 0
+        }
     }
 
     override fun getItemViewType(position: Int) = when (cells[position]) {
@@ -50,6 +69,24 @@ class SummaryAdapter(
         is InviteCell -> TYPE_INVITE
         is LoaderCell -> TYPE_LOADER
         else -> throw RuntimeException("Unknown viewtype for position $position")
+    }
+
+
+    fun setCells(new: List<Cell>) {
+        DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return cells[oldItemPosition].hashCode() == new[newItemPosition].hashCode()
+            }
+
+            override fun getOldListSize() = cells.size
+
+            override fun getNewListSize() = new.size
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return cells[oldItemPosition] == new[newItemPosition]
+            }
+        }).dispatchUpdatesTo(this)
+        this.cells = new
     }
 
     companion object {

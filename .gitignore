@@ -136,3 +136,5 @@ crashlytics-retrofit.properties
 *.jks
 
 build/
+app/key.properties
+app/release/
