@@ -7,6 +7,7 @@
               android:layout_height="128dp"
               android:foreground="?selectableItemBackgroundBorderless"
               android:gravity="center"
+              android:layout_gravity="top"
               android:orientation="vertical"
               android:padding="8dp">
     <!-- tools:background="#e4f33a" -->

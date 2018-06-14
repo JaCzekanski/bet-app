@@ -4,7 +4,6 @@ import android.arch.lifecycle.*
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.dynamiclinks.*
-import com.google.firebase.firestore.FirebaseFirestore
 import durdinapps.rxfirebase2.*
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.network.BetService
@@ -94,7 +93,12 @@ class BetViewModel : ViewModel() {
             Action.Share -> action@ {
                 val userId = userProvider.userId ?: return@action
 
-                Singles.zip(friendsRepository.getFriends(userId), createShareLink().toSingle(), { friends, link -> Pair(friends, link) })
+                val friendsSingle = friendsRepository.getFriends(userId)
+                        .map {friends -> // Filter out friends that are already invited
+                            friends.filter {state.v.bet?.users?.containsKey(it.id) == false}
+                        }
+
+                Singles.zip(friendsSingle, createShareLink().toSingle(), { friends, link -> Pair(friends, link) })
                         .doOnSubscribe { state.value = state.v.copy(showLoader = true) }
                         .doFinally { state.value = state.v.copy(showLoader = false) }
                         .subscribeBy(onSuccess = {
@@ -205,6 +209,7 @@ class BetViewModel : ViewModel() {
 
     }
 
+    // TODO: To provider
     private fun createShareLink(): Maybe<Uri> {
         val betId = state.v.bet?.id ?: return Maybe.error(RuntimeException("No bet id!"))
 
@@ -223,6 +228,18 @@ class BetViewModel : ViewModel() {
         return Maybe.create<ShortDynamicLink> { emitter -> RxHandler.assignOnTask(emitter, dynamicLink) }
                 .map { it.shortLink }
                 .applySchedulers()
+    }
+
+    fun shareLinkTo(userId: String) {
+        val betId = state.v.bet?.id ?: return
+        betService.api.inviteUser(betId, userId, userProvider.userId!!)
+                .applySchedulers()
+                .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
+                .doFinally { state.value = this.state.v.copy(showLoader = false) }
+                .subscribeBy(onError = {
+                    toast.value = "Unable to share bet!"
+                    Log.w("shareLinkTo", it)
+                })
     }
 
     fun sharedLink() {

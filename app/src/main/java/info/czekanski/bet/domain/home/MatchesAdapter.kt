@@ -45,7 +45,7 @@ class MatchesAdapter(
         val cell = cells[position]
         return when(cell) {
             is WelcomeCell -> -1000
-            is HeaderCell -> -1001
+            is HeaderCell -> cell.name.hashCode().toLong()
             is LoaderCell -> -1002
             is MatchCell -> cell.match.id.hashCode().toLong()
             is BetCell -> cell.bet.id.hashCode().toLong()

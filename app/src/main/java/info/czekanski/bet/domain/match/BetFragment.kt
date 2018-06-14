@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.*
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.*
 import android.widget.Toast
 import info.czekanski.bet.R
@@ -124,15 +125,18 @@ class BetFragment : Fragment() {
                         listOf(Friend.SHARE) + state.friends,
                         callback = { friend -> onFriendClicked(friend, state.shareLink) }
                 )
+                friendsRecyclerView.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
             }
         }
     }
 
     private fun onFriendClicked(friend: Friend, shareLink: Uri?) {
-        if (friend == Friend.SHARE && shareLink != null) {
-            openShareWindow(shareLink)
-        } else {
-            Toast.makeText(context, "Implement me!", Toast.LENGTH_SHORT).show()
+        if (shareLink != null) {
+            if (friend == Friend.SHARE) {
+                openShareWindow(shareLink)
+            } else {
+                viewModel.shareLinkTo(friend.id)
+            }
         }
         viewModel.sharedLink()
     }
