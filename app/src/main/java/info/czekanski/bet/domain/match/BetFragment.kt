@@ -15,6 +15,7 @@ import info.czekanski.bet.domain.match.summary.SummaryAdapter
 import info.czekanski.bet.domain.match.summary.cells.*
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.model.MatchState
+import info.czekanski.bet.network.firebase.model.FirebaseBet
 import info.czekanski.bet.network.scoreToPair
 import info.czekanski.bet.user.UserProvider
 import info.czekanski.bet.views.MatchView
@@ -111,62 +112,81 @@ class BetFragment : Fragment() {
                 textScore2.text = "${state.score.second}"
             }
             LIST -> {
-                val cells: MutableList<Cell>
-                if (state.bet == null) {
-                    cells = mutableListOf()
-                } else {
-                    cells = mutableListOf(
-                            HeaderCell(),
-                            SeparatorCell()
-                    )
-
-                    // Get user id and find his bet
-                    val stake = state.bet.bets[userProvider.userId]?.bid ?: 0
-
-                    val jackpot = state.bet.bets.values
-                            .mapNotNull { it.bid }
-                            .reduce { acc, i -> acc + i }
-
-                    val isAfterMatch = state.match?.state == MatchState.AFTER
-
-                    val winnerCount = state.bet.bets.values.map { it.score }
-                            .filter { it == state.match?.score }
-                            .count()
-
-                    val matchScore = state.match?.score?.scoreToPair()
-
-                    if (isAfterMatch && winnerCount == 0) {
-                        cells += NoteCell()
-                    }
-
-                    state.bet.bets.forEach {
-                        val userId = it.key
-                        val betEntry = it.value
-                        val score = betEntry.score.scoreToPair()
-
-                        var won: Int? = null
-                        if (isAfterMatch && score == matchScore) {
-                            won = jackpot / winnerCount
-                        }
-
-                        cells += EntryCell(state.nicknames.getOrDefault(userId, ". . ."), score, won)
-                    }
-
-                    cells += SeparatorCell()
-                    cells += SummaryCell(stake, jackpot)
-                    if (state.match?.state == MatchState.BEFORE) {
-                        cells += InviteCell(showText = state.bet.bets.size < 2)
-                    }
-                }
-                recyclerView.adapter = SummaryAdapter(cells, {
-                    when (it) {
-                        is InviteCell -> {
-                            viewModel.buttonClicked(Action.Share)
-                        }
-                    }
-                })
+                recyclerView.adapter = SummaryAdapter(createSummaryList(state), this::listCallback)
             }
         }
+    }
+
+    private fun listCallback(cell: Cell) {
+        when (cell) {
+            is InviteCell -> {
+                viewModel.buttonClicked(Action.Share)
+            }
+        }
+    }
+
+    private fun createSummaryList(state: BetViewState): List<Cell> {
+        if (state.bet == null) {
+            return listOf()
+        }
+
+        val cells = mutableListOf(
+                HeaderCell(),
+                SeparatorCell()
+        )
+
+        val bet = state.bet
+
+        // Get user id and find his bet
+        val stake = bet.bets[userProvider.userId]?.bid ?: 0
+
+        // How much was there to win
+        val jackpot = bet.bets.values
+                .mapNotNull { it.bid }
+                .reduce { acc, i -> acc + i }
+
+        // is match finished?
+        val isAfterMatch = state.match?.state == MatchState.AFTER
+
+        // How many people has hit the bet
+        val winnerCount = bet.bets.values.map { it.score }
+                .filter { it == state.match?.score }
+                .count()
+
+        val matchScore = state.match?.score?.scoreToPair()
+
+        // How big was jackpot of people who win
+        val winnerJackpot = bet.bets.values
+                .filter { it.score.scoreToPair() == matchScore }
+                .mapNotNull { it.bid }
+                .sum()
+
+        if (isAfterMatch && winnerCount == 0) {
+            cells += NoteCell()
+        }
+
+
+        bet.bets.forEach {
+            val userId = it.key
+            val betEntry = it.value
+            val bid = betEntry.bid
+            val score = betEntry.score.scoreToPair()
+
+            var won: Int? = null
+            if (isAfterMatch && score == matchScore && bid != null) {
+                val percentage = bid.toFloat() / winnerJackpot
+                won = (percentage * jackpot).toInt()
+            }
+
+            cells += EntryCell(state.nicknames.getOrDefault(userId, ". . ."), score, won)
+        }
+
+        cells += SeparatorCell()
+        cells += SummaryCell(stake, jackpot)
+        if (state.match?.state == MatchState.BEFORE) {
+            cells += InviteCell(showText = bet.bets.size < 2)
+        }
+        return cells
     }
 
     private fun openShareWindow(link: Uri) {
