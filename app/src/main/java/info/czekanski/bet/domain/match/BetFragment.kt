@@ -1,6 +1,6 @@
 package info.czekanski.bet.domain.match
 
-import android.arch.lifecycle.*
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.*
@@ -8,13 +8,13 @@ import android.support.v4.app.Fragment
 import android.view.*
 import android.widget.Toast
 import info.czekanski.bet.R
-import info.czekanski.bet.R.id.*
 import info.czekanski.bet.domain.home.utils.ItemDecorator
 import info.czekanski.bet.domain.match.BetViewModel.Action
 import info.czekanski.bet.domain.match.BetViewState.Step.*
 import info.czekanski.bet.domain.match.summary.SummaryAdapter
 import info.czekanski.bet.domain.match.summary.cells.*
 import info.czekanski.bet.misc.*
+import info.czekanski.bet.model.MatchState
 import info.czekanski.bet.network.scoreToPair
 import info.czekanski.bet.user.UserProvider
 import kotlinx.android.parcel.Parcelize
@@ -62,8 +62,6 @@ class BetFragment : Fragment() {
         buttonAccept2.setOnClickListener { viewModel.buttonClicked(Action.ScoreAccept) }
 
         buttonEdit.setOnClickListener { viewModel.buttonClicked(Action.EditBet) }
-
-        recyclerView.addItemDecoration(ItemDecorator())
     }
 
     private fun updateView(state: BetViewState) {
@@ -75,7 +73,7 @@ class BetFragment : Fragment() {
             viewMatch.bindMatch(state.match)
         }
         imageBall.show(state.step != LIST)
-        buttonEdit.show(state.step == LIST && state.bet != null)
+        buttonEdit.show(state.step == LIST && state.bet != null && state.match?.state == MatchState.BEFORE)
         progress.show(state.showLoader)
 
         // Steps
@@ -101,14 +99,6 @@ class BetFragment : Fragment() {
                             SeparatorCell()
                     )
 
-                    state.bet.bets.forEach {
-                        val userId = it.key
-                        val betEntry = it.value
-                        val score = betEntry.score.scoreToPair() ?: return@forEach
-
-                        cells += EntryCell(state.nicknames.getOrDefault(userId, ". . ."), score)
-                    }
-
                     // Get user id and find his bet
                     val stake = state.bet.bets[userProvider.userId]?.bid ?: 0
 
@@ -116,9 +106,36 @@ class BetFragment : Fragment() {
                             .mapNotNull { it.bid }
                             .reduce { acc, i -> acc + i }
 
+                    val isAfterMatch = state.match?.state == MatchState.AFTER
+
+                    val winnerCount = state.bet.bets.values.map { it.score }
+                            .filter { it == state.match?.score }
+                            .count()
+
+                    val matchScore = state.match?.score?.scoreToPair()
+
+                    if (isAfterMatch && winnerCount == 0) {
+                        cells += NoteCell()
+                    }
+
+                    state.bet.bets.forEach {
+                        val userId = it.key
+                        val betEntry = it.value
+                        val score = betEntry.score.scoreToPair() ?: return@forEach
+
+                        var won: Int? = null
+                        if (isAfterMatch && score == matchScore) {
+                            won = jackpot/winnerCount
+                        }
+
+                        cells += EntryCell(state.nicknames.getOrDefault(userId, ". . ."), score, won)
+                    }
+
                     cells += SeparatorCell()
                     cells += SummaryCell(stake, jackpot)
-                    cells += InviteCell(showText = state.bet.bets.size < 2)
+                    if (state.match?.state == MatchState.BEFORE) {
+                        cells += InviteCell(showText = state.bet.bets.size < 2)
+                    }
                 }
                 recyclerView.adapter = SummaryAdapter(cells, {
                     when (it) {

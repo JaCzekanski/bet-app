@@ -1,5 +1,6 @@
 package info.czekanski.bet.model
 
+import info.czekanski.bet.model.MatchState.BEFORE
 import java.util.*
 
 data class Match(
@@ -9,12 +10,6 @@ data class Match(
         val date: Date = Date(),
         val event: Int = 0,
         val score: String? = null,
-        val state: String = StateBefore
-) {
-    companion object {
-        const val StateBefore = "BEFORE"
-        const val StateDuring = "DURING"
-        const val StateAfter = "AFTER"
-    }
-}
+        val state: String = BEFORE
+)
 typealias Team = String

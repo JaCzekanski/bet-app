@@ -4,6 +4,8 @@
               android:layout_width="match_parent"
               android:layout_height="46dp"
               android:orientation="horizontal"
+              android:paddingLeft="32dp"
+              android:paddingRight="32dp"
               android:gravity="center_vertical">
 <!-- tools:background="#e4f33a" -->
     <TextView
@@ -21,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="50dp"
         android:fontFamily="@font/atletico_medium"
+        android:textStyle="bold"
         android:text="+30 zł"
         android:textColor="#de000000"
         android:textSize="20sp"/>
@@ -30,6 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/atletico_medium"
+        android:textStyle="bold"
         android:gravity="right"
         android:text="2 - 3"
         android:textColor="#000000"

@@ -6,6 +6,7 @@ import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.misc.*
+import info.czekanski.bet.model.MatchState
 import info.czekanski.bet.repository.*
 import info.czekanski.bet.user.UserProvider
 import io.reactivex.disposables.Disposable
@@ -42,7 +43,7 @@ class HomeViewModel : ViewModel() {
                             bet.copy(match = matches.find { match ->
                                 match.id == bet.matchId
                             })
-                        }
+                        }.sortedBy { it.match?.date }
                         cells += HeaderCell("Twoje typy")
                         cells += betsWithMatches.map { BetCell(it) }
                     }
@@ -51,6 +52,7 @@ class HomeViewModel : ViewModel() {
                         cells += HeaderCell("Najbliższe mecze")
                         cells += matches
                                 .take(4)
+                                .filter { it.state != MatchState.AFTER }
                                 .map { MatchCell(it) }
                     }
 

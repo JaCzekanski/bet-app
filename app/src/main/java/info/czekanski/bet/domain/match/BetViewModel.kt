@@ -111,8 +111,8 @@ class BetViewModel : ViewModel() {
         if (s.bet == null) {
             subs += betService.api.createBet(s.match.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
                     .applySchedulers()
-                    .doOnSubscribe { state.value = this.state.v.copy(step = BetViewState.Step.LIST, showLoader = true) }
-                    .doFinally { state.value = this.state.v.copy(showLoader = false) }
+                    .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
+                    .doFinally { state.value = this.state.v.copy(step = BetViewState.Step.LIST, showLoader = false) }
                     .subscribeBy(onSuccess = { result ->
                         if (state.v.bet == null) {
                             loadBet(result.id)
@@ -126,7 +126,7 @@ class BetViewModel : ViewModel() {
             subs += betService.api.updateBet(s.bet.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
                     .applySchedulers()
                     .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
-                    .doFinally { state.value = this.state.v.copy(showLoader = false) }
+                    .doFinally { state.value = this.state.v.copy(step = BetViewState.Step.LIST, showLoader = false) }
                     .subscribeBy(onError = {
                         toast.value = "Unable to update bet!"
                         Log.w("UpdateBet", it)
@@ -149,7 +149,12 @@ class BetViewModel : ViewModel() {
     private fun loadBet(betId: String) {
         subs += betRepository.observeBet(betId)
                 .subscribeBy(onNext = { bet ->
-                    state.value = state.v.copy(step = BetViewState.Step.LIST, bet = bet)
+                    state.value = state.v.copy(bet = bet)
+
+                    if (bet.bets.containsKey(userProvider.userId)) {
+                        state.value = state.v.copy(step = BetViewState.Step.LIST)
+                    }
+
                     loadNicknames(bet)
                     if (state.v.match == null) loadMatch(bet.matchId)
                 }, onError = {

@@ -3,12 +3,14 @@ package info.czekanski.bet.domain.login
 
 import android.arch.lifecycle.*
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.os.*
 import android.support.v4.app.*
 import android.text.*
 import android.util.*
 import android.view.*
 import android.widget.*
+import info.czekanski.bet.*
 import info.czekanski.bet.R
 import info.czekanski.bet.domain.home.*
 import info.czekanski.bet.misc.*
@@ -55,9 +57,12 @@ class LoginFragment : Fragment() {
     }
 
     private fun goToHome() {
-        requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.container, HomeFragment())
-                .commitNowAllowingStateLoss()
+        startActivity(
+                Intent(context, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        .setData(requireActivity().intent.data)
+        )
+        requireActivity().finish()
     }
 }
 

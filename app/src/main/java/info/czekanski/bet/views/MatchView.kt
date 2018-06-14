@@ -38,7 +38,7 @@ class MatchView @JvmOverloads constructor(
                 .apply(com.bumptech.glide.request.RequestOptions.circleCropTransform())
                 .into(flag2)
 
-        if (match.state == Match.StateBefore) {
+        if (match.state == MatchState.BEFORE) {
             if (callback == null) {
                 button.hide()
             } else {
@@ -58,7 +58,19 @@ class MatchView @JvmOverloads constructor(
             myScore.show()
             myScore.text = userScore
         } else {
-            myScore.hide()
+            when (match.state) {
+                MatchState.DURING -> {
+                    myScore.show()
+                    myScore.text = "TRWA"
+                }
+                MatchState.AFTER -> {
+                    myScore.show()
+                    myScore.text = "KONIEC"
+                }
+                else -> {
+                    myScore.hide()
+                }
+            }
         }
     }
 

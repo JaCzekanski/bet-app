@@ -2,8 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal"
-    android:layout_marginBottom="32dp">
+              android:layout_marginLeft="32dp"
+              android:layout_marginRight="32dp"
+              android:layout_marginBottom="32dp"
+              android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -24,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/atletico_medium"
+            android:textStyle="bold"
             android:text="10 zł"
             android:textColor="#de000000"
             android:textSize="20sp"/>
@@ -49,6 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/atletico_medium"
+            android:textStyle="bold"
             android:text="30 zł"
             android:textColor="#6f000000"
             android:textSize="20sp"/>

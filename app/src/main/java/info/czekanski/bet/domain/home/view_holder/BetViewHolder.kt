@@ -5,6 +5,7 @@ import android.view.*
 import info.czekanski.bet.domain.home.*
 import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.misc.*
+import info.czekanski.bet.model.MatchState
 import info.czekanski.bet.network.firebase.model.*
 import info.czekanski.bet.user.*
 import kotlinx.android.extensions.*
@@ -19,7 +20,15 @@ class BetViewHolder(override val containerView: View, val callback: Callback) : 
     fun bind(cell: BetCell) {
         val userBet = cell.bet.bets[userProvider.userId]
 
-        cell.bet.match?.let { viewMatch.bindMatch(it, userScore = userBet?.score ?: "? - ?") }
+        val isAfterMatch = cell.bet.match?.state == MatchState.AFTER
+
+        val smallText = when {
+            isAfterMatch && userBet?.score == cell.bet.match?.score -> "TRAFIONY"
+            isAfterMatch && userBet?.score != cell.bet.match?.score -> "PUDŁO"
+            else -> userBet?.score ?: "? - ?"
+        }
+
+        cell.bet.match?.let { viewMatch.bindMatch(it, userScore = smallText) }
 
         containerView.setOnClickListener { callback(cell) }
 

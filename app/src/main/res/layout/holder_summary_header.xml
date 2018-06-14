@@ -3,6 +3,8 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="32dp"
+              android:layout_marginLeft="32dp"
+              android:layout_marginRight="32dp"
               android:orientation="horizontal">
 
     <TextView
@@ -10,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="@font/atletico_medium"
+        android:textStyle="bold"
         android:text="Nickname"
         android:textColor="#000000"
         android:textSize="16sp"/>
@@ -19,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="@font/atletico_medium"
+        android:textStyle="bold"
         android:gravity="right"
         android:text="Wynik"
         android:textColor="#000000"

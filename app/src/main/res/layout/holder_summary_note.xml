@@ -3,8 +3,11 @@
           android:layout_width="match_parent"
           android:layout_height="80dp"
           android:background="#14000000"
+          android:drawableLeft="@drawable/ic_whistle"
+          android:drawablePadding="30dp"
           android:gravity="center_vertical"
-          android:paddingLeft="45dp"
+          android:paddingLeft="24dp"
+          android:paddingRight="24dp"
           android:text="Nikt nie trafił wyniku. Kasa z puli przechodzi na kolejny mecz."
           android:textColor="#de000000"
           android:textSize="16sp"/>
