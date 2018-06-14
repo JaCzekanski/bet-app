@@ -49,6 +49,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.container)
+        if (fragment is OnBackPressedInterface){
+            if (!fragment.onBackPressed()) super.onBackPressed()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     private fun parseDeeplink(): Boolean {
         if (intent.data != null) {
             val uri = intent.data

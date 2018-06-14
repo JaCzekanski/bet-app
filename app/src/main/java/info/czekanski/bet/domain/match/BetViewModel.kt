@@ -5,8 +5,9 @@ import android.net.Uri
 import android.util.Log
 import com.google.firebase.dynamiclinks.*
 import durdinapps.rxfirebase2.*
+import info.czekanski.bet.domain.match.BetViewState.*
 import info.czekanski.bet.misc.*
-import info.czekanski.bet.network.BetService
+import info.czekanski.bet.network.*
 import info.czekanski.bet.network.firebase.model.FirebaseBet
 import info.czekanski.bet.network.model.Bet
 import info.czekanski.bet.repository.*
@@ -42,7 +43,7 @@ class BetViewModel : ViewModel() {
                 loadBet(betId)
             }
 
-            state.value = BetViewState(step = BetViewState.Step.BID)
+            state.value = BetViewState(step = Step.BID)
         }
 
         return state
@@ -63,7 +64,7 @@ class BetViewModel : ViewModel() {
                 if (state.v.bid < 100) state.value = state.v.copy(bid = state.v.bid + 5)
             }
             Action.BidAccept -> {
-                state.value = state.v.copy(step = BetViewState.Step.SCORE)
+                state.value = state.v.copy(step = Step.SCORE)
             }
             Action.Team1ScoreMinus -> {
                 if (state.v.score.first > 0) state.value = state.v.updateScore(first = state.v.score.first - 1)
@@ -81,12 +82,16 @@ class BetViewModel : ViewModel() {
                 updateOrCreateBet()
             }
             Action.EditBet -> {
-                if (state.v.step == BetViewState.Step.LIST) {
-                    state.value = state.v.copy(step = BetViewState.Step.BID)
-                }
+                val bet = state.v.bet?.bets?.get(userProvider.userId!!)
+
+                state.value = state.v.copy(
+                        step = Step.BID,
+                        bid = bet?.bid ?: 0,
+                        score = bet?.score?.scoreToPair() ?: Pair(0, 0)
+                )
             }
             Action.DeleteBet -> {
-                if (state.v.step == BetViewState.Step.LIST && state.v.bet != null) {
+                if (state.v.step == Step.LIST && state.v.bet != null) {
                     deleteBet()
                 }
             }
@@ -94,8 +99,9 @@ class BetViewModel : ViewModel() {
                 val userId = userProvider.userId ?: return@action
 
                 val friendsSingle = friendsRepository.getFriends(userId)
-                        .map {friends -> // Filter out friends that are already invited
-                            friends.filter {state.v.bet?.users?.containsKey(it.id) == false}
+                        .map { friends ->
+                            // Filter out friends that are already invited
+                            friends.filter { state.v.bet?.users?.containsKey(it.id) == false }
                         }
 
                 Singles.zip(friendsSingle, createShareLink().toSingle(), { friends, link -> Pair(friends, link) })
@@ -107,7 +113,7 @@ class BetViewModel : ViewModel() {
                             state.value = state.v.copy(
                                     friends = friends,
                                     shareLink = link,
-                                    step = BetViewState.Step.FRIENDS
+                                    step = Step.FRIENDS
                             )
                         }, onError = {
                             Log.e("MatchFragment", "createShareLink", it)
@@ -139,13 +145,13 @@ class BetViewModel : ViewModel() {
             subs += betService.api.createBet(s.match.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
                     .applySchedulers()
                     .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
-                    .doFinally { state.value = this.state.v.copy(step = BetViewState.Step.LIST, showLoader = false) }
+                    .doFinally { state.value = this.state.v.copy(step = Step.LIST, showLoader = false) }
                     .subscribeBy(onSuccess = { result ->
                         if (state.v.bet == null) {
                             loadBet(result.id)
                         }
                     }, onError = {
-                        state.value = state.v.copy(step = BetViewState.Step.BID)
+                        state.value = state.v.copy(step = Step.BID)
                         toast.value = "Unable to create bet!"
                         Log.w("CreateBet", it)
                     })
@@ -153,7 +159,7 @@ class BetViewModel : ViewModel() {
             subs += betService.api.updateBet(s.bet.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
                     .applySchedulers()
                     .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
-                    .doFinally { state.value = this.state.v.copy(step = BetViewState.Step.LIST, showLoader = false) }
+                    .doFinally { state.value = this.state.v.copy(step = Step.LIST, showLoader = false) }
                     .subscribeBy(onError = {
                         toast.value = "Unable to update bet!"
                         Log.w("UpdateBet", it)
@@ -179,7 +185,7 @@ class BetViewModel : ViewModel() {
                     state.value = state.v.copy(bet = bet)
 
                     if (bet.bets.containsKey(userProvider.userId)) {
-                        state.value = state.v.copy(step = BetViewState.Step.LIST)
+                        state.value = state.v.copy(step = Step.LIST)
                     }
 
                     loadNicknames(bet)
@@ -243,7 +249,27 @@ class BetViewModel : ViewModel() {
     }
 
     fun sharedLink() {
-        state.value = state.v.copy(step = BetViewState.Step.LIST)
+        state.value = state.v.copy(step = Step.LIST)
+    }
+
+    fun onBackPressed(): Boolean {
+        val s = state.v
+
+        return when {
+            s.step == Step.FRIENDS -> {
+                state.value = s.copy(step = Step.LIST)
+                true
+            }
+            s.step == Step.BID && s.bet != null -> {
+                state.value = s.copy(step = Step.LIST)
+                true
+            }
+            s.step == Step.SCORE && s.bet != null -> {
+                state.value = s.copy(step = Step.BID)
+                true
+            }
+            else -> false
+        }
     }
 
     enum class Action {

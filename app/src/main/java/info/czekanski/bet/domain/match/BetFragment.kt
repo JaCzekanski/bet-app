@@ -1,5 +1,6 @@
 package info.czekanski.bet.domain.match
 
+import android.animation.LayoutTransition
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
@@ -26,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_bet.*
 import kotlinx.android.synthetic.main.layout_match_bid.*
 import kotlinx.android.synthetic.main.layout_match_score.*
 
-class BetFragment : Fragment() {
+class BetFragment : Fragment(), OnBackPressedInterface {
     private val userProvider by lazy { UserProvider.instance }
     private val arg by lazy { getArgument<Argument>() }
     private val summaryAdapter = SummaryAdapter(this::listCallback)
@@ -69,8 +70,13 @@ class BetFragment : Fragment() {
         buttonEdit.setOnClickListener { viewModel.buttonClicked(Action.EditBet) }
 
         recyclerView.adapter = summaryAdapter
-
     }
+
+
+    override fun onBackPressed(): Boolean {
+        return viewModel.onBackPressed()
+    }
+
 
     private fun showDeleteWarningDialog() {
         val dialog = AlertDialog.Builder(requireContext(), R.style.Base_Theme_MaterialComponents_Light_Dialog)
@@ -104,10 +110,11 @@ class BetFragment : Fragment() {
         progress.show(state.showLoader)
 
         // Steps
-        layoutBid.show(state.step == BID)
-        layoutScore.show(state.step == SCORE)
-        recyclerView.show(state.step == LIST)
-        friendsRecyclerView.show(state.step == FRIENDS)
+        layoutBid.delayedShow(state.step == BID)
+        layoutScore.delayedShow(state.step == SCORE)
+        recyclerView.delayedShow(state.step == LIST)
+        friendsRecyclerView.delayedShow(state.step == FRIENDS)
+        commitDelayedShow()
 
         when (state.step) {
             BID -> {
