@@ -10,7 +10,8 @@ data class BetViewState(
         val bet: FirebaseBet? = null,
         val match: Match? = null,
         val showLoader: Boolean = false,
-        val nicknames: Map<String, String> = mapOf()
+        val nicknames: Map<String, String> = mapOf(),
+        val closeView: Boolean = false
 ) {
 
     enum class Step {

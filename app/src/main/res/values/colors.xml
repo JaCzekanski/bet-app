@@ -10,4 +10,7 @@
     <color name="textInactive">#1affffff</color>
     <color name="textActive">#ffffff</color>
     <color name="lightGrey">#60ffffff</color>
+
+    <color name="textNickActive">#de000000</color>
+    <color name="textNickInctive">#80000000</color>
 </resources>

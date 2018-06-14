@@ -5,10 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.view.*
 import android.widget.Toast
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.home.utils.ItemDecorator
 import info.czekanski.bet.domain.match.BetViewModel.Action
 import info.czekanski.bet.domain.match.BetViewState.Step.*
 import info.czekanski.bet.domain.match.summary.SummaryAdapter
@@ -62,10 +62,29 @@ class BetFragment : Fragment() {
         buttonPlus2.setOnClickListener { viewModel.buttonClicked(Action.Team2ScorePlus) }
         buttonAccept2.setOnClickListener { viewModel.buttonClicked(Action.ScoreAccept) }
 
+        buttonDelete.setOnClickListener { showDeleteWarningDialog() }
         buttonEdit.setOnClickListener { viewModel.buttonClicked(Action.EditBet) }
     }
 
+    private fun showDeleteWarningDialog() {
+        val dialog = AlertDialog.Builder(requireContext(), R.style.Base_Theme_MaterialComponents_Light_Dialog)
+                .setTitle("Jesteś pewien?")
+                .setMessage("Zostaniesz usunięty z zakładu.")
+                .setNegativeButton("Anuluj", { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                })
+                .setPositiveButton("Usuń", { dialogInterface, i ->
+                    viewModel.buttonClicked(Action.DeleteBet)
+                }).create()
+
+        dialog.show()
+    }
+
     private fun updateView(state: BetViewState) {
+        if (state.closeView) {
+            requireActivity().supportFragmentManager.popBackStack()
+            return
+        }
         // Misc
         if (state.match == null) {
             viewMatch.invisible()
@@ -74,6 +93,7 @@ class BetFragment : Fragment() {
             viewMatch.bindMatch(state.match)
         }
         imageBall.show(state.step != LIST)
+        buttonDelete.show(state.bet != null && state.match?.state == MatchState.BEFORE)
         buttonEdit.show(state.step == LIST && state.bet != null && state.match?.state == MatchState.BEFORE)
         progress.show(state.showLoader)
 
@@ -122,11 +142,11 @@ class BetFragment : Fragment() {
                     state.bet.bets.forEach {
                         val userId = it.key
                         val betEntry = it.value
-                        val score = betEntry.score.scoreToPair() ?: return@forEach
+                        val score = betEntry.score.scoreToPair()
 
                         var won: Int? = null
                         if (isAfterMatch && score == matchScore) {
-                            won = jackpot/winnerCount
+                            won = jackpot / winnerCount
                         }
 
                         cells += EntryCell(state.nicknames.getOrDefault(userId, ". . ."), score, won)

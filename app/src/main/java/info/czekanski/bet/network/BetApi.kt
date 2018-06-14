@@ -17,4 +17,8 @@ interface BetApi {
     fun updateBet(@Path("betId") betId: String,
                   @Body bet: Bet,
                   @Header("Authorization") token: String): Completable
+
+    @DELETE("/api/bet/{betId}")
+    fun deleteBet(@Path("betId") betId: String,
+                  @Header("Authorization") token: String): Completable
 }

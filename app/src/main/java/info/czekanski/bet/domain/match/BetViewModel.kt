@@ -93,6 +93,11 @@ class BetViewModel : ViewModel() {
                     state.value = state.v.copy(step = BetViewState.Step.BID)
                 }
             }
+            Action.DeleteBet -> {
+                if (state.v.step == BetViewState.Step.LIST && state.v.bet != null) {
+                    deleteBet()
+                }
+            }
             Action.Share -> {
                 createShareLink()
                         .doOnSubscribe { state.value = state.v.copy(showLoader = true) }
@@ -102,6 +107,22 @@ class BetViewModel : ViewModel() {
                                 onError = { Log.e("MatchFragment", "createShareLink", it) }
                         )
             }
+        }
+    }
+
+    private fun deleteBet() {
+        val s = state.v
+        if (s.bet != null) {
+            subs += betService.api.deleteBet(s.bet.id, userProvider.userId!!)
+                    .applySchedulers()
+                    .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
+                    .doFinally { state.value = this.state.v.copy(showLoader = false) }
+                    .subscribeBy(onComplete = {
+                        state.value = this.state.v.copy(closeView = true)
+                    }, onError = {
+                        toast.value = "Unable to delete bet!"
+                        Log.w("DeleteBet", it)
+                    })
         }
     }
 
@@ -218,7 +239,7 @@ class BetViewModel : ViewModel() {
     enum class Action {
         BidMinus, BidPlus, BidAccept,
         Team1ScoreMinus, Team1ScorePlus, Team2ScoreMinus, Team2ScorePlus, ScoreAccept,
-        EditBet, Share
+        DeleteBet, EditBet, Share,
     }
 }
 
