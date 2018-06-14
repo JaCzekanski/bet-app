@@ -95,6 +95,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:visibility="gone"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             app:layoutManager="android.support.v7.widget.StaggeredGridLayoutManager"
             app:spanCount="3"
             tools:listitem="@layout/holder_summary_entry"/>

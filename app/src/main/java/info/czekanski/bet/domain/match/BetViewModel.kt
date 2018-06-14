@@ -22,9 +22,7 @@ class BetViewModel : ViewModel() {
     private val betRepository by lazy { BetRepository.instance }
     private val matchRepository by lazy { MatchRepository.instance }
     private val friendsRepository by lazy { FriendsRepository.instance }
-    private val nicknameCache by lazy { NicknameCache.instance }
     private val userProvider by lazy { UserProvider.instance }
-    private val firestore by lazy { FirebaseFirestore.getInstance() }
     private val state = MutableLiveData<BetViewState>()
     private val toast = MutableLiveData<String>()
 
@@ -189,37 +187,23 @@ class BetViewModel : ViewModel() {
     }
 
     private fun loadNicknames(bet: FirebaseBet) {
-        val nicknames = state.v.nicknames
-
-        var flowable: Flowable<Pair<String, String?>> = Flowable.empty()
+        var flowable: Flowable<Friend> = Flowable.empty()
 
         bet.bets.keys.forEach { userId ->
-            if (!nicknames.containsKey(userId)) {
-                if (nicknameCache.map.containsKey(userId)) {
-                    state.value = state.v.updateNickname(userId, nicknameCache.map[userId])
-                } else {
-                    flowable = flowable.mergeWith(loadNickname(userId).toFlowable())
-                }
-            }
+            flowable = flowable.mergeWith(friendsRepository.getName(userId)
+                    .map { userName -> Friend(userId, userName) }
+                    .toFlowable())
         }
 
         subs += flowable
-                .subscribeBy(onNext = {
-                    val (userId, nick) = it
-                    nicknameCache.map[userId] = nick
+                .subscribeBy(onNext = { friend ->
+                    val (userId, nick) = friend
                     state.value = state.v.updateNickname(userId, nick)
                 }, onError = {
                     Log.e("LoadNicknames", "User ...", it)
                 })
 
     }
-
-    private fun loadNickname(userId: String): Maybe<Pair<String, String?>> {
-        return RxFirestore.getDocument(firestore.collection("users").document(userId))
-                .map { Pair(userId, it.getString("nick")) }
-                .applySchedulers()
-    }
-
 
     private fun createShareLink(): Maybe<Uri> {
         val betId = state.v.bet?.id ?: return Maybe.error(RuntimeException("No bet id!"))
@@ -239,6 +223,10 @@ class BetViewModel : ViewModel() {
         return Maybe.create<ShortDynamicLink> { emitter -> RxHandler.assignOnTask(emitter, dynamicLink) }
                 .map { it.shortLink }
                 .applySchedulers()
+    }
+
+    fun sharedLink() {
+        state.value = state.v.copy(step = BetViewState.Step.LIST)
     }
 
     enum class Action {

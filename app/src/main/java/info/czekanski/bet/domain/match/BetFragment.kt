@@ -131,7 +131,10 @@ class BetFragment : Fragment() {
     private fun onFriendClicked(friend: Friend, shareLink: Uri?) {
         if (friend == Friend.SHARE && shareLink != null) {
             openShareWindow(shareLink)
+        } else {
+            Toast.makeText(context, "Implement me!", Toast.LENGTH_SHORT).show()
         }
+        viewModel.sharedLink()
     }
 
     private fun listCallback(cell: Cell) {

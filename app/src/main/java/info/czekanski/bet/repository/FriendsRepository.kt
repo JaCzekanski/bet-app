@@ -19,6 +19,7 @@ class FriendsRepository(val firestore: FirebaseFirestore) {
                             .distinct()
                 }
                 .flattenAsFlowable { it }
+                .filter { id -> id != userId } // Filter out myself
                 .flatMap { friendId ->
                     getName(friendId)
                             .map { userName -> Friend(friendId, userName) }
