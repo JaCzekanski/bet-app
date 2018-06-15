@@ -38,12 +38,16 @@ class BetViewModel : ViewModel() {
             if (matchId == null && betId == null) {
                 throw RuntimeException("Invalid parameters for MatchFragment - pass either matchId or betId")
             } else if (matchId != null) {
+                // New bet - go to bid state
                 loadMatch(matchId)
+                state.value = BetViewState(step = Step.BID)
             } else if (betId != null) {
+                // Existing bet - go to list
                 loadBet(betId)
+                state.value = BetViewState(step = Step.LIST, showLoader = true)
             }
 
-            state.value = BetViewState(step = Step.BID)
+            state.value = state.v.copy(userId = userProvider.userId)
         }
 
         return state
@@ -80,6 +84,13 @@ class BetViewModel : ViewModel() {
             }
             Action.ScoreAccept -> {
                 updateOrCreateBet()
+            }
+            Action.GotoBet -> {
+                state.value = state.v.copy(
+                        step = Step.BID,
+                        bid = 0,
+                        score = Pair(0, 0)
+                )
             }
             Action.EditBet -> {
                 val bet = state.v.bet?.bets?.get(userProvider.userId!!)
@@ -147,9 +158,7 @@ class BetViewModel : ViewModel() {
                     .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
                     .doFinally { state.value = this.state.v.copy(step = Step.LIST, showLoader = false) }
                     .subscribeBy(onSuccess = { result ->
-                        if (state.v.bet == null) {
-                            loadBet(result.id)
-                        }
+                        if (state.v.bet == null) loadBet(result.id)
                     }, onError = {
                         state.value = state.v.copy(step = Step.BID)
                         toast.value = "Unable to create bet!"
@@ -182,11 +191,7 @@ class BetViewModel : ViewModel() {
     private fun loadBet(betId: String) {
         subs += betRepository.observeBet(betId)
                 .subscribeBy(onNext = { bet ->
-                    state.value = state.v.copy(bet = bet)
-
-                    if (bet.bets.containsKey(userProvider.userId)) {
-                        state.value = state.v.copy(step = Step.LIST)
-                    }
+                    state.value = state.v.copy(bet = bet, showLoader = false)
 
                     loadNicknames(bet)
                     if (state.v.match == null) loadMatch(bet.matchId)
@@ -275,7 +280,7 @@ class BetViewModel : ViewModel() {
     enum class Action {
         BidMinus, BidPlus, BidAccept,
         Team1ScoreMinus, Team1ScorePlus, Team2ScoreMinus, Team2ScorePlus, ScoreAccept,
-        DeleteBet, EditBet, Share,
+        GotoBet, DeleteBet, EditBet, Share,
     }
 }
 

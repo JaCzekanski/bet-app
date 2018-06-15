@@ -23,7 +23,8 @@ class BetViewHolder(override val containerView: View, val callback: Callback) : 
         val smallText = when {
             isAfterMatch && userBet?.score == cell.bet.match?.score -> "TRAFIONY"
             isAfterMatch && userBet?.score != cell.bet.match?.score -> "PUDŁO"
-            else -> userBet?.score ?: "? - ?"
+            !isAfterMatch && cell.bet.match?.state == MatchState.DURING -> "TRWA"
+            else -> ""
         }
 
         cell.bet.match?.let { viewMatch.bindMatch(it, userScore = smallText) }

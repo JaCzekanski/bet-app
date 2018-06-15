@@ -4,5 +4,5 @@ import info.czekanski.bet.misc.Cell
 
 data class WelcomeCell(
         val nick: String?,
-        val showOpenLinkMessage: Boolean = true
+        val showMessages: Boolean = true
 ) : Cell

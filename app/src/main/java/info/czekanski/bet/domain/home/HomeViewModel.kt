@@ -14,6 +14,7 @@ class HomeViewModel : ViewModel() {
     private val betRepository by lazy { BetRepository.instance }
     private val matchesRepository by lazy { MatchRepository.instance }
     private val userProvider by lazy { UserProvider.instance }
+    private val preferencesProvider by lazy { PreferencesProvider._instance!!} // TODO: Kill it with fire!!!!!
     private val liveCells = MutableLiveData<List<Cell>>()
     private var subscription: Disposable? = null
 
@@ -34,7 +35,7 @@ class HomeViewModel : ViewModel() {
                 }
                 .subscribeBy(onNext = {
                     val (bets, matches) = it
-                    val cells = mutableListOf<Cell>(WelcomeCell(userProvider.nick))
+                    val cells = mutableListOf<Cell>(WelcomeCell(userProvider.nick, preferencesProvider.runCount < 3))
 
                     if (bets.isNotEmpty()) {
                         val betsWithMatches = bets.map { bet ->

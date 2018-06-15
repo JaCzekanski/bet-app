@@ -11,12 +11,14 @@ import info.czekanski.bet.domain.login.*
 import info.czekanski.bet.domain.match.BetFragment
 import info.czekanski.bet.domain.profile.ProfileFragment
 import info.czekanski.bet.misc.*
+import info.czekanski.bet.repository.PreferencesProvider
 import info.czekanski.bet.user.UserProvider
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
     private val userProvider by lazy { UserProvider.instance }
+    private val preferencesProvider by lazy { PreferencesProvider.getInstance(applicationContext)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +37,10 @@ class MainActivity : AppCompatActivity() {
 
         if (parseDeeplink()) return
 
-        if (savedInstanceState == null) navigateWithTransition(HomeFragment())
+        if (savedInstanceState == null) {
+            preferencesProvider.runCount++
+            navigateWithTransition(HomeFragment())
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

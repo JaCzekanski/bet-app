@@ -11,6 +11,7 @@ import android.support.v7.widget.*
 import android.view.*
 import android.widget.Toast
 import info.czekanski.bet.R
+import info.czekanski.bet.domain.home.cells.BetCell
 import info.czekanski.bet.domain.match.BetViewModel.Action
 import info.czekanski.bet.domain.match.BetViewState.Step.*
 import info.czekanski.bet.domain.match.friends.FriendsAdapter
@@ -106,8 +107,8 @@ class BetFragment : Fragment(), OnBackPressedInterface {
             viewMatch.bindMatch(state.match)
         }
         imageBall.show(state.step != LIST)
-        buttonDelete.show(state.bet != null && state.match?.state == MatchState.BEFORE)
-        buttonEdit.show(state.step == LIST && state.bet != null && state.match?.state == MatchState.BEFORE)
+        buttonDelete.show(state.bet?.users?.contains(state.userId) == true && state.match?.state == MatchState.BEFORE)
+        buttonEdit.show(state.bet?.bets?.contains(state.userId) == true && state.step == LIST && state.match?.state == MatchState.BEFORE)
         progress.show(state.showLoader)
 
         // Steps
@@ -151,9 +152,8 @@ class BetFragment : Fragment(), OnBackPressedInterface {
 
     private fun listCallback(cell: Cell) {
         when (cell) {
-            is InviteCell -> {
-                viewModel.buttonClicked(Action.Share)
-            }
+            is InviteCell -> viewModel.buttonClicked(Action.Share)
+            is BidCell -> viewModel.buttonClicked(Action.GotoBet)
         }
     }
 
@@ -215,8 +215,11 @@ class BetFragment : Fragment(), OnBackPressedInterface {
 
         cells += SeparatorCell()
         cells += SummaryCell(stake, jackpot)
+
+        val userAlreadyBid = !bet.bets[state.userId]?.score.isNullOrEmpty()
         if (state.match?.state == MatchState.BEFORE) {
-            cells += InviteCell(showText = bet.bets.size < 2)
+            if (userAlreadyBid) cells += InviteCell(showText = bet.bets.size < 2)
+            else cells += BidCell()
         }
         return cells
     }

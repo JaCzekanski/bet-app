@@ -1,39 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_gravity="center"
-              android:gravity="center"
-              android:orientation="vertical"
-              android:padding="32dp">
-
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:animateLayoutChanges="true"
+                                             android:padding="32dp">
 
     <EditText
         android:id="@+id/textNick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#cccccc"
-        android:inputType="text"
         android:hint="@string/nickname"
+        android:inputType="text"
         android:textColor="#000000"
-        android:textColorHint="#cccccc"/>
+        android:textColorHint="#cccccc"
+        app:layout_constraintBottom_toTopOf="@id/buttonLogin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.39"
+        app:layout_constraintVertical_chainStyle="packed"/>
 
-    <FrameLayout
-        android:layout_width="wrap_content"
+    <android.support.design.button.MaterialButton
+        android:id="@+id/buttonLogin"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="32dp"
+        android:text="@string/dalej"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNick"
+        app:layout_constraintVertical_chainStyle="packed"/>
 
-        <android.support.design.button.MaterialButton
-            android:id="@+id/buttonLogin"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="@string/dalej"/>
-
-        <ProgressBar
-            android:id="@+id/progress"
-            android:visibility="gone"
-            android:layout_gravity="center"
-            android:layout_width="32dp"
-            android:layout_height="32dp"/>
-    </FrameLayout>
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/buttonLogin"
+        app:layout_constraintLeft_toLeftOf="@id/buttonLogin"
+        app:layout_constraintRight_toRightOf="@id/buttonLogin"
+        app:layout_constraintTop_toTopOf="@id/buttonLogin"/>
+</android.support.constraint.ConstraintLayout>

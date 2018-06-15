@@ -18,6 +18,8 @@ class WelcomeViewHolder(override val containerView: View) : RecyclerView.ViewHol
         }
 
 
-        textOpenLink.show(cell.showOpenLinkMessage)
+        topSpace.show(cell.showMessages)
+        textSubtitle.show(cell.showMessages)
+        textOpenLink.show(cell.showMessages)
     }
 }

@@ -43,9 +43,7 @@ class LoginFragment : Fragment() {
 
         textNick.onTextChange { updateView() }
         loading.observe(this, Observer { if (it != null) updateView() })
-
-
-        loading.postValue(false)
+        loading.value = false
     }
 
     private fun updateView() {

@@ -15,7 +15,8 @@ data class BetViewState(
         val nicknames: Map<String, String> = mapOf(),
         val closeView: Boolean = false,
         val friends: List<Friend> = listOf(),
-        val shareLink: Uri? = null
+        val shareLink: Uri? = null,
+        val userId: String? = null
 ) {
 
     enum class Step {
