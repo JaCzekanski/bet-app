@@ -1,9 +1,7 @@
 package info.czekanski.bet.network
 
-import info.czekanski.bet.network.model.Bet
-import info.czekanski.bet.network.model.ReturnId
-import io.reactivex.Completable
-import io.reactivex.Single
+import info.czekanski.bet.network.model.*
+import io.reactivex.*
 import retrofit2.http.*
 
 interface BetApi {

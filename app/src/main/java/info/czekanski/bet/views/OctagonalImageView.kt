@@ -1,9 +1,7 @@
 package info.czekanski.bet.views
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Path
-import android.graphics.Rect
+import android.graphics.*
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 

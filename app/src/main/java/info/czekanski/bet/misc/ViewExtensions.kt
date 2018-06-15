@@ -1,6 +1,5 @@
 package info.czekanski.bet.misc
 
-import android.support.v4.view.ViewCompat
 import android.view.View
 
 

@@ -4,7 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import durdinapps.rxfirebase2.RxFirestore
 import info.czekanski.bet.misc.applySchedulers
 import info.czekanski.bet.model.Match
-import io.reactivex.*
+import io.reactivex.Flowable
 
 class MatchRepository(val firestore: FirebaseFirestore) {
 

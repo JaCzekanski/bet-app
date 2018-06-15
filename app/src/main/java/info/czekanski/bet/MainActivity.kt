@@ -1,18 +1,17 @@
 package info.czekanski.bet
 
 import android.content.Intent
-import android.os.*
+import android.os.Bundle
 import android.support.v4.app.*
-import android.support.v7.app.*
-import android.util.*
-import info.czekanski.bet.domain.home.*
-import info.czekanski.bet.domain.login.*
-import info.czekanski.bet.domain.match.*
-import info.czekanski.bet.misc.*
-import info.czekanski.bet.user.*
-import kotlinx.android.synthetic.main.activity_main.*
-import android.support.design.widget.BottomNavigationView
+import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import info.czekanski.bet.domain.calendar.CalendarFragment
+import info.czekanski.bet.domain.home.HomeFragment
+import info.czekanski.bet.domain.login.*
+import info.czekanski.bet.domain.match.BetFragment
+import info.czekanski.bet.misc.*
+import info.czekanski.bet.user.UserProvider
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,11 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         if (parseDeeplink()) return
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, HomeFragment())
-                    .commitAllowingStateLoss()
-        }
+        if (savedInstanceState == null) navigateWithTransition(HomeFragment())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -51,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentById(R.id.container)
-        if (fragment is OnBackPressedInterface){
+        if (fragment is OnBackPressedInterface) {
             if (!fragment.onBackPressed()) super.onBackPressed()
         } else {
             super.onBackPressed()
@@ -69,11 +64,7 @@ class MainActivity : AppCompatActivity() {
                 val betId = result.groupValues[1]
 
                 navigateTo(HomeFragment())
-
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, BetFragment().withArgument(BetFragment.Argument(betId = betId)))
-                        .addToBackStack(null)
-                        .commitAllowingStateLoss()
+                navigateWithTransition(BetFragment().withArgument(BetFragment.Argument(betId = betId)), addToBackStack = true)
                 return true
                 // Home
                 // Bet
@@ -121,11 +112,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateTo(fragment: Fragment) {
-        supportFragmentManager. popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .commitAllowingStateLoss()
+        supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        navigateWithTransition(fragment)
     }
-
-//    override fun onSupportNavigateUp() = findNavController(R.id.navHostFragment).navigateUp()
 }

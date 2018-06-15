@@ -4,16 +4,9 @@ import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.domain.match.summary.cells.*
-import info.czekanski.bet.domain.match.summary.cells.HeaderCell
-import info.czekanski.bet.domain.match.summary.cells.LoaderCell
-import info.czekanski.bet.domain.match.summary.view_holder.EntryViewHolder
-import info.czekanski.bet.domain.match.summary.view_holder.InviteViewHolder
-import info.czekanski.bet.domain.match.summary.view_holder.StaticViewHolder
-import info.czekanski.bet.domain.match.summary.view_holder.SummaryViewHolder
-import info.czekanski.bet.misc.Cell
-import info.czekanski.bet.misc.inflate
+import info.czekanski.bet.domain.match.summary.view_holder.*
+import info.czekanski.bet.misc.*
 
 class SummaryAdapter(
         private val callback: Callback = {}

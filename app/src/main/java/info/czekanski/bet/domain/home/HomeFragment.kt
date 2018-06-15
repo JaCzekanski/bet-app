@@ -44,11 +44,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun goToMatchView(arg: BetFragment.Argument) {
-//        findNavController().navigate(R.id.actionOpenMatch, bundleOf(match))
-        requireActivity().supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.from_top, R.anim.fade_out, R.anim.fade_in, R.anim.to_top)
-                .replace(R.id.container, BetFragment().withArgument(arg))
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+        requireActivity().navigateWithSlide(BetFragment().withArgument(arg), true)
     }
 }

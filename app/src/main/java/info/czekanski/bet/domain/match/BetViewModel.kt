@@ -4,8 +4,8 @@ import android.arch.lifecycle.*
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.dynamiclinks.*
-import durdinapps.rxfirebase2.*
-import info.czekanski.bet.domain.match.BetViewState.*
+import durdinapps.rxfirebase2.RxHandler
+import info.czekanski.bet.domain.match.BetViewState.Step
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.network.*
 import info.czekanski.bet.network.firebase.model.FirebaseBet

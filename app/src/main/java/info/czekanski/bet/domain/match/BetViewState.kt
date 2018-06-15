@@ -1,7 +1,6 @@
 package info.czekanski.bet.domain.match
 
 import android.net.Uri
-import com.google.firebase.dynamiclinks.*
 import info.czekanski.bet.model.Match
 import info.czekanski.bet.network.firebase.model.FirebaseBet
 import info.czekanski.bet.repository.Friend

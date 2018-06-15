@@ -1,12 +1,9 @@
 package info.czekanski.bet.misc
 
 import android.content.Context
-import android.support.annotation.LayoutRes
-import android.support.annotation.StyleRes
+import android.support.annotation.*
 import android.support.v7.view.ContextThemeWrapper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 
 
 fun ViewGroup.inflate(@LayoutRes layout: Int): View =

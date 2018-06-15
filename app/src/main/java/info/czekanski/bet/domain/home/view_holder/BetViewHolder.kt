@@ -1,17 +1,15 @@
 package info.czekanski.bet.domain.home.view_holder
 
-import android.support.v7.widget.*
-import android.view.*
-import info.czekanski.bet.domain.home.*
-import info.czekanski.bet.domain.home.cells.*
+import android.support.v7.widget.RecyclerView
+import android.view.View
+import info.czekanski.bet.domain.home.Callback
+import info.czekanski.bet.domain.home.cells.BetCell
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.model.MatchState
-import info.czekanski.bet.network.firebase.model.*
-import info.czekanski.bet.user.*
-import kotlinx.android.extensions.*
+import info.czekanski.bet.network.firebase.model.FirebaseBetEntry
+import info.czekanski.bet.user.UserProvider
+import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.holder_home_bet.*
-import java.text.*
-import java.util.*
 
 
 class BetViewHolder(override val containerView: View, val callback: Callback) : RecyclerView.ViewHolder(containerView), LayoutContainer {

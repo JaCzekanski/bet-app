@@ -2,15 +2,11 @@ package info.czekanski.bet.domain.calendar
 
 import android.arch.lifecycle.*
 import android.util.Log
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
 import info.czekanski.bet.domain.home.cells.*
-import info.czekanski.bet.misc.*
-import info.czekanski.bet.model.MatchState
-import info.czekanski.bet.repository.*
-import info.czekanski.bet.user.UserProvider
+import info.czekanski.bet.misc.Cell
+import info.czekanski.bet.repository.MatchRepository
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.*
+import io.reactivex.rxkotlin.subscribeBy
 
 class CalendarViewModel : ViewModel() {
     val matchesRepository by lazy { MatchRepository.instance }

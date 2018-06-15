@@ -2,10 +2,8 @@ package info.czekanski.bet.domain.home
 
 import android.arch.lifecycle.*
 import android.util.Log
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
 import info.czekanski.bet.domain.home.cells.*
-import info.czekanski.bet.misc.*
+import info.czekanski.bet.misc.Cell
 import info.czekanski.bet.model.MatchState
 import info.czekanski.bet.repository.*
 import info.czekanski.bet.user.UserProvider

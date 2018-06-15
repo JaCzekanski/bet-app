@@ -1,7 +1,7 @@
 package info.czekanski.bet.misc
 
 import android.os.*
-import android.support.v4.app.*
+import android.support.v4.app.Fragment
 
 
 fun <T : Fragment> T.withArgument(arg: Parcelable): T {

@@ -2,21 +2,19 @@ package info.czekanski.bet.domain.login
 
 
 import android.arch.lifecycle.*
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.os.*
-import android.support.v4.app.*
+import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.text.*
-import android.util.*
+import android.util.Log
 import android.view.*
-import android.widget.*
+import android.widget.EditText
 import info.czekanski.bet.*
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.home.*
 import info.czekanski.bet.misc.*
-import info.czekanski.bet.user.*
-import io.reactivex.*
-import io.reactivex.rxkotlin.*
+import info.czekanski.bet.user.UserProvider
+import io.reactivex.Completable
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_login.*
 
 class LoginFragment : Fragment() {

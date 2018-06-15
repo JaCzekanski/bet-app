@@ -1,17 +1,17 @@
 package info.czekanski.bet.views
 
-import android.content.*
-import android.support.v4.content.*
+import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.support.v7.view.ContextThemeWrapper
-import android.util.*
-import android.view.*
-import android.widget.*
-import info.czekanski.bet.*
+import android.util.AttributeSet
+import android.view.View
+import android.widget.LinearLayout
+import info.czekanski.bet.R
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.model.*
-import info.czekanski.bet.network.*
+import info.czekanski.bet.network.scoreToPair
 import kotlinx.android.synthetic.main.view_match.view.*
-import java.text.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MatchView @JvmOverloads constructor(

@@ -1,6 +1,5 @@
 package info.czekanski.bet.domain.match
 
-import android.animation.LayoutTransition
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
