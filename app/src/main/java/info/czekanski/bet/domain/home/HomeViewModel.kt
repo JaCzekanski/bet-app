@@ -50,8 +50,8 @@ class HomeViewModel : ViewModel() {
                     if (matches.isNotEmpty()) {
                         cells += HeaderCell("Najbliższe mecze")
                         cells += matches
-                                .take(4)
                                 .filter { it.state != MatchState.AFTER }
+                                .take(4)
                                 .map { MatchCell(it) }
                     }
 
