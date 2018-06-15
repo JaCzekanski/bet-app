@@ -61,11 +61,11 @@ class MatchView @JvmOverloads constructor(
             when (match.state) {
                 MatchState.DURING -> {
                     myScore.show()
-                    myScore.text = "TRWA"
+                    myScore.text = context.getString(R.string.trwa)
                 }
                 MatchState.AFTER -> {
                     myScore.show()
-                    myScore.text = "KONIEC"
+                    myScore.text = context.getString(R.string.koniec)
                 }
                 else -> {
                     myScore.hide()
@@ -76,9 +76,9 @@ class MatchView @JvmOverloads constructor(
 
 
     companion object {
-        val formatter = SimpleDateFormat("H:mm  .  d.MM")
+        val formatter = SimpleDateFormat("H:mm  .  d.MM", Locale("PL"))
 
-        public fun getCountryName(code: String): String {
+        fun getCountryName(code: String): String {
             return Locale("", code.toUpperCase()).getDisplayCountry(Locale("PL"))
         }
     }

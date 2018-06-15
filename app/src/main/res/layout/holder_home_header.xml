@@ -8,7 +8,7 @@
           android:paddingRight="32dp"
           android:layout_marginBottom="4dp"
           android:layout_marginTop="18dp"
-          android:text="Najbliższe mecze"
+          android:text="@string/najblizsze_mecze"
           android:textColor="#000000"
           android:textSize="16sp"
           app:fontFamily="@font/atletico_medium"/>

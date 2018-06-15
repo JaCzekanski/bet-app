@@ -8,8 +8,8 @@ import info.czekanski.bet.user.UserProvider
 import io.reactivex.Flowable
 
 class BetRepository(
-        val firestore: FirebaseFirestore,
-        val userProvider: UserProvider
+        private val firestore: FirebaseFirestore,
+        private val userProvider: UserProvider
 ) {
 
     fun getBets(): Flowable<List<FirebaseBet>> {

@@ -33,7 +33,7 @@ class HomeFragment : Fragment() {
         recyclerView.adapter = matchesAdapter
         recyclerView.addItemDecoration(ListDecorator())
         recyclerView.setHasFixedSize(true)
-        (recyclerView.itemAnimator as SimpleItemAnimator).setChangeDuration(0)
+        (recyclerView.itemAnimator as SimpleItemAnimator).changeDuration = 0
     }
 
     private fun onCellClicked(cell: Cell) {

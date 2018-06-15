@@ -1,12 +1,13 @@
 package info.czekanski.bet.domain.match
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.StaggeredGridLayoutManager
+import android.support.v7.widget.*
 import android.view.*
 import android.widget.Toast
 import info.czekanski.bet.R
@@ -77,6 +78,7 @@ class BetFragment : Fragment(), OnBackPressedInterface {
     }
 
 
+    @SuppressLint("PrivateResource")
     private fun showDeleteWarningDialog() {
         val dialog = AlertDialog.Builder(requireContext(), R.style.Base_Theme_MaterialComponents_Light_Dialog)
                 .setTitle("Jesteś pewien?")
@@ -117,7 +119,7 @@ class BetFragment : Fragment(), OnBackPressedInterface {
 
         when (state.step) {
             BID -> {
-                textBid.text = "${state.bid} zł"
+                textBid.text = requireContext().getString(R.string.zl, state.bid)
             }
             SCORE -> {
                 textScore1.text = "${state.score.first}"
@@ -208,7 +210,7 @@ class BetFragment : Fragment(), OnBackPressedInterface {
                 won = (percentage * jackpot).toInt()
             }
 
-            cells += EntryCell(state.nicknames.getOrDefault(userId, ". . ."), score, won)
+            cells += EntryCell(state.nicknames[userId] ?: ". . .", score, won, bid)
         }
 
         cells += SeparatorCell()

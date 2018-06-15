@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
@@ -13,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="78dp"
-        android:text="Hej, Krachtan"
+        tools:text="Hej, Krachtan"
         android:textColor="#283149"
         android:textSize="36sp"
         app:fontFamily="@font/atletico_medium"/>
@@ -22,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:text="Typuj wyniki spotkań razem ze swoimi znajomymi."
+        android:text="@string/typuj_wyniki"
         android:textColor="#283149"
         android:textSize="20sp"/>
 
@@ -32,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:alpha="0.5"
-        android:text="Protip: Otwórz linka od znajomego, aby dołączyć do zakładu"
+        android:text="@string/protip"
         android:textColor="#283149"
         android:textSize="16sp"/>
 

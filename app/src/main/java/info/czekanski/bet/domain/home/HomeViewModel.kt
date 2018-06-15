@@ -11,9 +11,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.*
 
 class HomeViewModel : ViewModel() {
-    val betRepository by lazy { BetRepository.instance }
-    val matchesRepository by lazy { MatchRepository.instance }
-    val userProvider by lazy { UserProvider.instance }
+    private val betRepository by lazy { BetRepository.instance }
+    private val matchesRepository by lazy { MatchRepository.instance }
+    private val userProvider by lazy { UserProvider.instance }
     private val liveCells = MutableLiveData<List<Cell>>()
     private var subscription: Disposable? = null
 

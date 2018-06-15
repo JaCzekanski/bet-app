@@ -8,6 +8,6 @@
           android:gravity="center_vertical"
           android:paddingLeft="24dp"
           android:paddingRight="24dp"
-          android:text="Nikt nie trafił wyniku. Kasa z puli przechodzi na kolejny mecz."
+          android:text="@string/nikt_nie_trafil"
           android:textColor="#de000000"
           android:textSize="16sp"/>

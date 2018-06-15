@@ -2,6 +2,7 @@
 <android.support.design.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="10dp"
@@ -31,11 +32,11 @@
             android:id="@+id/layoutBottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp"
-            android:clipToPadding="false"
             android:clipChildren="false"
+            android:clipToPadding="false"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="24dp">
 
             <TextView
                 android:id="@+id/textPeopleCount"
@@ -46,8 +47,8 @@
                 android:drawableLeft="@drawable/ic_people"
                 android:drawablePadding="12dp"
                 android:gravity="center_horizontal"
-                android:text="3 osoby"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                tools:text="3 osoby"/>
 
             <View
                 android:layout_width="1dp"
@@ -62,8 +63,8 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_cash"
                 android:drawablePadding="12dp"
-                android:text="30 zł"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                tools:text="30 zł"/>
 
             <View
                 android:layout_width="1dp"
@@ -77,9 +78,9 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="right"
-                android:text="Więcej"
                 android:foreground="@drawable/ripple_red"
+                android:gravity="right"
+                android:text="@string/wiecej"
                 android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 app:fontFamily="@font/atletico_medium"/>
@@ -95,9 +96,9 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/outline_red"
             android:foreground="@drawable/ripple_red"
-            app:fontFamily="@font/atletico_bold"
-            android:text="Zaproś znajomych"
-            android:textColor="@color/colorAccent"/>
+            android:text="@string/zapros_znajomych"
+            android:textColor="@color/colorAccent"
+            app:fontFamily="@font/atletico_bold"/>
     </LinearLayout>
 
 </android.support.design.card.MaterialCardView>

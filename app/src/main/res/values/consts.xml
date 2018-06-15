@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="zl" formatted="true" translatable="false">%d zł</string>
+</resources>

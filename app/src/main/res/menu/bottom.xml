@@ -4,13 +4,13 @@
     <item
         android:id="@+id/action_home"
         android:icon="@drawable/ic_playfield"
-        android:title="Home"/>
+        android:title="@string/home"/>
     <item
         android:id="@+id/action_matches"
         android:icon="@drawable/ic_calendar"
-        android:title="Mecze"/>
+        android:title="@string/mecze"/>
     <item
         android:id="@+id/action_profile"
         android:icon="@drawable/ic_profile"
-        android:title="Profil"/>
+        android:title="@string/profil"/>
 </menu>

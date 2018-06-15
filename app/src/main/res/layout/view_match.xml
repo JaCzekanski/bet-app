@@ -44,7 +44,8 @@
         android:layout_marginTop="16dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -106,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="38dp"
                 android:backgroundTint="@color/colorAccent"
-                android:text="Typuj"
+                android:text="@string/typuj"
                 android:textSize="14sp"
                 android:visibility="gone"
                 tools:visibility="visible"

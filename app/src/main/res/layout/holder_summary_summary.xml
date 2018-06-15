@@ -2,10 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_marginLeft="32dp"
               android:layout_marginRight="32dp"
               android:layout_marginBottom="32dp"
-              android:orientation="horizontal">
+              android:orientation="horizontal"
+              android:baselineAligned="false">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -16,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="stawka"
+            android:text="@string/stawka"
             android:textColor="#8a000000"
             android:textSize="16sp"/>
 
@@ -27,7 +29,7 @@
             android:layout_marginTop="5dp"
             android:fontFamily="@font/atletico_medium"
             android:textStyle="bold"
-            android:text="10 zł"
+            tools:text="10 zł"
             android:textColor="#de000000"
             android:textSize="20sp"/>
 
@@ -42,7 +44,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="kasa w puli"
+            android:text="@string/kasa_w_puli"
             android:textColor="#8a000000"
             android:textSize="16sp"/>
 
@@ -53,7 +55,7 @@
             android:layout_marginTop="5dp"
             android:fontFamily="@font/atletico_medium"
             android:textStyle="bold"
-            android:text="30 zł"
+            tools:text="30 zł"
             android:textColor="#6f000000"
             android:textSize="20sp"/>
 

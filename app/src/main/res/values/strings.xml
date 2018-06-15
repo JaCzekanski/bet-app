@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">Obstawiamy Mundial</string>
+    <string name="home">Home</string>
+    <string name="mecze">Mecze</string>
+    <string name="profil">Profil</string>
+    <string name="nickname">Nickname</string>
+    <string name="dalej">Dalej</string>
+    <string name="zmien_nicka">Zmień nicka</string>
+    <string name="usu_konto">Usuń konto</string>
+    <string name="wiecej">Więcej</string>
+    <string name="zapros_znajomych">Zaproś znajomych</string>
+    <string name="typuj">Typuj</string>
+    <string name="jaki_wynik_typujesz">Jaki wynik typujesz?</string>
+    <string name="jak_stawk_ustawiasz">Jaką stawkę ustawiasz?</string>
+    <string name="kasa_w_puli">kasa w puli</string>
+    <string name="stawka">stawka</string>
+    <string name="nikt_nie_trafil">Nikt nie trafił wyniku. Kasa z puli przechodzi na kolejny mecz.</string>
+    <string name="zapros_znajomych_opis">Żeby zabawa miała sens zaproś znajomych do typowania wyniku.</string>
+    <string name="wynik">Wynik</string>
+    <string name="typuj_wyniki">Typuj wyniki spotkań razem ze swoimi znajomymi.</string>
+    <string name="protip">Protip: Otwórz linka od znajomego, aby dołączyć do zakładu</string>
+    <string name="najblizsze_mecze">Najbliższe mecze</string>
+    <string name="trwa">TRWA</string>
+    <string name="koniec">KONIEC</string>
+    <string name="witaj">Witaj</string>
+    <string name="hej_nick">Hej, %s.</string>
 </resources>

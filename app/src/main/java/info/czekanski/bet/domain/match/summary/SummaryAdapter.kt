@@ -20,7 +20,7 @@ class SummaryAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
         TYPE_HEADER -> StaticViewHolder(parent.inflate(R.layout.holder_summary_header))
         TYPE_SEPARATOR -> StaticViewHolder(parent.inflate(R.layout.holder_summary_separator))
-        TYPE_ENTRY -> EntryViewHolder(parent.inflate(R.layout.holder_summary_entry))
+        TYPE_ENTRY -> EntryViewHolder(parent.inflate(R.layout.holder_summary_entry), callback)
         TYPE_SUMMARY -> SummaryViewHolder(parent.inflate(R.layout.holder_summary_summary))
         TYPE_NOTE -> StaticViewHolder(parent.inflate(R.layout.holder_summary_note))
         TYPE_INVITE -> InviteViewHolder(parent.inflate(R.layout.holder_summary_invite), callback)

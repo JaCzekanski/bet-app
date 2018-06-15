@@ -6,8 +6,8 @@ import info.czekanski.bet.misc.applySchedulers
 import info.czekanski.bet.network.firebase.model.FirebaseBet
 import io.reactivex.*
 
-class FriendsRepository(val firestore: FirebaseFirestore) {
-    val cache = mutableMapOf<String, String?>()
+class FriendsRepository(private val firestore: FirebaseFirestore) {
+    private val cache = mutableMapOf<String, String?>()
 
     fun getFriends(userId: String): Single<List<Friend>> {
         return RxFirestore.getCollection(firestore.collection("bets").whereEqualTo("users.$userId", true))

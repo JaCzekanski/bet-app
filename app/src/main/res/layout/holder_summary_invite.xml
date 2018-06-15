@@ -17,7 +17,7 @@
         android:lineSpacingExtra="4sp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:text="Żeby zabawa miała sens zaproś znajomych do typowania wyniku."
+        android:text="@string/zapros_znajomych_opis"
         android:textColor="#de000000"
         android:textSize="16sp"/>
 
@@ -31,7 +31,7 @@
         android:layout_marginBottom="16dp"
         android:background="@drawable/outline_button"
         android:foreground="@drawable/ripple_grey"
-        android:text="Zaproś znajomych"
+        android:text="@string/zapros_znajomych"
         android:textColor="#37474f"
         app:fontFamily="@font/atletico_bold"/>
 </LinearLayout>

@@ -4,5 +4,4 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 
 
-class StaticViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-}
+class StaticViewHolder(view: View) : RecyclerView.ViewHolder(view)

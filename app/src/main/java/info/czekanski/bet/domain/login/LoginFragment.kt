@@ -18,8 +18,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_login.*
 
 class LoginFragment : Fragment() {
-    val loading = MutableLiveData<Boolean>()
-    val userProvider by lazy { UserProvider.instance }
+    private val loading = MutableLiveData<Boolean>()
+    private val userProvider by lazy { UserProvider.instance }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)

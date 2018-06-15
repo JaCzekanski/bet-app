@@ -13,7 +13,7 @@
         android:layout_weight="1"
         android:fontFamily="@font/atletico_medium"
         android:textStyle="bold"
-        android:text="Nickname"
+        android:text="@string/nickname"
         android:textColor="#000000"
         android:textSize="16sp"/>
 
@@ -24,7 +24,7 @@
         android:fontFamily="@font/atletico_medium"
         android:textStyle="bold"
         android:gravity="right"
-        android:text="Wynik"
+        android:text="@string/wynik"
         android:textColor="#000000"
         android:textSize="16sp"/>
 </LinearLayout>

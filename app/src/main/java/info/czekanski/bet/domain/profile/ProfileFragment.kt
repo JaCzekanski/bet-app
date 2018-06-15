@@ -1,6 +1,7 @@
-package info.czekanski.bet.domain.login
+package info.czekanski.bet.domain.profile
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -9,6 +10,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import info.czekanski.bet.R
+import info.czekanski.bet.domain.login.LoginActivity
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.user.UserProvider
 import io.reactivex.Completable
@@ -16,12 +18,13 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : Fragment() {
-    val userProvider by lazy { UserProvider.instance }
+    private val userProvider by lazy { UserProvider.instance }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
+    @SuppressLint("PrivateResource")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

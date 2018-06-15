@@ -8,7 +8,7 @@ import info.czekanski.bet.misc.applySchedulers
 import io.reactivex.*
 import io.reactivex.rxkotlin.subscribeBy
 
-class UserProvider private constructor(val firestore: FirebaseFirestore, val auth: FirebaseAuth) {
+class UserProvider private constructor(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) {
     var nick: String? = null
         private set
 

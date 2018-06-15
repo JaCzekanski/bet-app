@@ -6,7 +6,7 @@ import info.czekanski.bet.misc.applySchedulers
 import info.czekanski.bet.model.Match
 import io.reactivex.Flowable
 
-class MatchRepository(val firestore: FirebaseFirestore) {
+class MatchRepository(private val firestore: FirebaseFirestore) {
 
     fun getMatches(): Flowable<List<Match>> {
         return RxFirestore.observeQueryRef(firestore.collection("matches").orderBy("date"))

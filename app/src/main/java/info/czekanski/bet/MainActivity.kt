@@ -9,6 +9,7 @@ import info.czekanski.bet.domain.calendar.CalendarFragment
 import info.czekanski.bet.domain.home.HomeFragment
 import info.czekanski.bet.domain.login.*
 import info.czekanski.bet.domain.match.BetFragment
+import info.czekanski.bet.domain.profile.ProfileFragment
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.user.UserProvider
 import kotlinx.android.synthetic.main.activity_main.*

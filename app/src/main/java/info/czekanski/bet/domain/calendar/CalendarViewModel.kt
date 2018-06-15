@@ -9,7 +9,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 
 class CalendarViewModel : ViewModel() {
-    val matchesRepository by lazy { MatchRepository.instance }
+    private val matchesRepository by lazy { MatchRepository.instance }
     private val liveCells = MutableLiveData<List<Cell>>()
     private var subscription: Disposable? = null
 
