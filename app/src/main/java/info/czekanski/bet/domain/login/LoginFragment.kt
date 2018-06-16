@@ -9,6 +9,7 @@ import android.text.*
 import android.util.Log
 import android.view.*
 import android.widget.EditText
+import com.google.firebase.iid.FirebaseInstanceId
 import info.czekanski.bet.*
 import info.czekanski.bet.R
 import info.czekanski.bet.misc.*
@@ -31,6 +32,15 @@ class LoginFragment : Fragment() {
         buttonLogin.setOnClickListener {
             userProvider.login()
                     .andThen(Completable.defer { userProvider.setNick(textNick.text.toString().trim()) })
+                    .andThen(Completable.defer {
+                        val token = FirebaseInstanceId.getInstance().token
+                        if (token != null) {
+                            Log.d("LoginFragment", "fcmToken: $token")
+                            userProvider.setFcmToken(token)
+                        } else {
+                            Completable.complete()
+                        }
+                    })
                     .doOnSubscribe { loading.postValue(true) }
                     .doAfterTerminate { loading.postValue(false) }
                     .subscribeBy(onComplete = {

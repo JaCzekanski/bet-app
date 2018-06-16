@@ -9,8 +9,8 @@ android {
         applicationId "info.czekanski.bet"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 205
-        versionName "0.2.5"
+        versionCode 207
+        versionName "0.2.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,6 +38,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.google.firebase:firebase-firestore:17.0.1'
     implementation 'com.google.firebase:firebase-auth:16.0.1'
+    implementation 'com.google.firebase:firebase-messaging:17.0.0'
     implementation 'com.google.firebase:firebase-invites:16.0.0'
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     kapt 'com.github.bumptech.glide:compiler:4.7.1'

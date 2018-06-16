@@ -5,6 +5,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import durdinapps.rxfirebase2.*
 import info.czekanski.bet.misc.applySchedulers
+import info.czekanski.bet.model.TokenRequest
+import info.czekanski.bet.network.BetService
 import io.reactivex.*
 import io.reactivex.rxkotlin.subscribeBy
 
@@ -65,6 +67,17 @@ class UserProvider private constructor(private val firestore: FirebaseFirestore,
             Log.e("UserProvider", "loadNick", it)
         })
         return single
+    }
+
+    fun setFcmToken(fcmToken: String): Completable {
+        return BetService.instance.api.registerDevice(TokenRequest(fcmToken), userId!!)
+                .applySchedulers()
+    }
+
+
+    fun removeFcmToken(): Completable {
+        return BetService.instance.api.unregisterDevice(userId!!)
+                .applySchedulers()
     }
 
 

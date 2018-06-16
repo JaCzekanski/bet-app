@@ -16,15 +16,33 @@
             </intent-filter>
 
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https"
-                      android:host="bet.czekanski.info" />
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="bet.czekanski.info"
+                    android:scheme="https"/>
             </intent-filter>
         </activity>
-        <activity android:name=".domain.login.LoginActivity"
+        <activity
+            android:name=".domain.login.LoginActivity"
             android:windowSoftInputMode="adjustResize"/>
+
+        <service
+            android:name=".service.FirebaseTokenRegistrationService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".receiver.UpdateReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

@@ -44,6 +44,7 @@ class ProfileFragment : Fragment() {
                     })
                     .setPositiveButton("Usuń", { dialogInterface, i ->
                         userProvider.setNick(null)
+                                .andThen(Completable.defer { userProvider.removeFcmToken() })
                                 .andThen(Completable.defer { userProvider.logout() })
                                 .doOnSubscribe { progress.show() }
                                 .doAfterTerminate {

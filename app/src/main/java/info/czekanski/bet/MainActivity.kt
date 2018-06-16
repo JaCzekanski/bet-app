@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.support.v4.app.*
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.google.firebase.iid.FirebaseInstanceId
+import info.czekanski.bet.R.id.bottomNavigation
 import info.czekanski.bet.domain.calendar.CalendarFragment
 import info.czekanski.bet.domain.home.HomeFragment
 import info.czekanski.bet.domain.login.*
@@ -13,12 +15,13 @@ import info.czekanski.bet.domain.profile.ProfileFragment
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.repository.PreferencesProvider
 import info.czekanski.bet.user.UserProvider
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
     private val userProvider by lazy { UserProvider.instance }
-    private val preferencesProvider by lazy { PreferencesProvider.getInstance(applicationContext)}
+    private val preferencesProvider by lazy { PreferencesProvider.getInstance(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
