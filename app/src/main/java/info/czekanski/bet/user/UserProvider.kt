@@ -56,6 +56,8 @@ class UserProvider private constructor(private val firestore: FirebaseFirestore,
 
     fun loadNick(): Single<String> {
         if (!loggedIn) return Single.just("")
+        if (nick != null) return Single.just(nick)
+
         val single = RxFirestore.getDocument(firestore.document("users/$userId"))
                 .applySchedulers()
                 .map { it.getString("nick") }

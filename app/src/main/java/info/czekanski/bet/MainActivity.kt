@@ -5,17 +5,15 @@ import android.os.Bundle
 import android.support.v4.app.*
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import com.google.firebase.iid.FirebaseInstanceId
-import info.czekanski.bet.R.id.bottomNavigation
-import info.czekanski.bet.domain.calendar.CalendarFragment
+import info.czekanski.bet.domain.bets.BetsFragment
 import info.czekanski.bet.domain.home.HomeFragment
 import info.czekanski.bet.domain.login.*
-import info.czekanski.bet.domain.match.BetFragment
+import info.czekanski.bet.domain.game.GameFragment
+import info.czekanski.bet.domain.matches.MatchesFragment
 import info.czekanski.bet.domain.profile.ProfileFragment
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.repository.PreferencesProvider
 import info.czekanski.bet.user.UserProvider
-import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -62,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private fun parseDeeplink(): Boolean {
         if (intent.data != null) {
             val uri = intent.data
+            intent.data = null
 
             Log.d("MainActivity", "Deeplink uri: $uri")
 
@@ -70,14 +69,8 @@ class MainActivity : AppCompatActivity() {
                 val betId = result.groupValues[1]
 
                 navigateTo(HomeFragment())
-                navigateWithTransition(BetFragment().withArgument(BetFragment.Argument(betId = betId)), addToBackStack = true)
+                navigateWithTransition(GameFragment().withArgument(GameFragment.Argument(betId = betId)), addToBackStack = true)
                 return true
-                // Home
-                // Bet
-                // Login
-
-                // Home
-                // Bet
             }
         }
         return false
@@ -96,29 +89,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun initMenu() {
         bottomNavigation.setOnNavigationItemSelectedListener listener@{
-            if (getSelectedItem() == it.itemId) return@listener false
-            when (it.itemId) {
-                R.id.action_home -> {
-                    navigateTo(HomeFragment())
-                    return@listener true
-                }
-                R.id.action_matches -> {
-                    navigateTo(CalendarFragment())
-                    return@listener true
-                }
-                R.id.action_profile -> {
-                    navigateTo(ProfileFragment())
-                    return@listener true
-                }
-                else -> {
-                    return@listener false
-                }
+            return@listener when (it.itemId) {
+                getSelectedItem() -> false
+                R.id.action_home -> navigateTo(HomeFragment())
+                R.id.action_bets -> navigateTo(BetsFragment())
+                R.id.action_matches -> navigateTo(MatchesFragment())
+                R.id.action_profile -> navigateTo(ProfileFragment())
+                else -> false
             }
         }
     }
 
-    private fun navigateTo(fragment: Fragment) {
+    private fun navigateTo(fragment: Fragment): Boolean {
         supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         navigateWithTransition(fragment)
+        return true
     }
 }

@@ -5,6 +5,7 @@ import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.*
 import info.czekanski.bet.R
+import info.czekanski.bet.domain.game.summary.cells.SummaryCell
 import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.domain.home.view_holder.*
 import info.czekanski.bet.misc.Cell
@@ -24,6 +25,8 @@ class MatchesAdapter(
         TYPE_MATCH -> MatchViewHolder(parent.inflate(R.layout.holder_home_match), callback)
         TYPE_BET -> BetViewHolder(parent.inflate(R.layout.holder_home_bet), callback)
         TYPE_LOADER -> StaticViewHolder(parent.inflate(R.layout.holder_home_loader))
+        TYPE_RESULTS -> ResultsViewHolder(parent.inflate(R.layout.holder_home_results))
+        TYPE_EMPTY -> EmptyViewHolder(parent.inflate(R.layout.holder_home_empty))
         else -> throw RuntimeException("Unknown viewType $viewType for MatchesAdapter")
     }
 
@@ -34,6 +37,8 @@ class MatchesAdapter(
         is HeaderViewHolder -> holder.bind(cells[position] as HeaderCell)
         is MatchViewHolder -> holder.bind(cells[position] as MatchCell)
         is BetViewHolder -> holder.bind(cells[position] as BetCell)
+        is ResultsViewHolder -> holder.bind(cells[position] as ResultsCell)
+        is EmptyViewHolder -> holder.bind(cells[position] as EmptyCell)
         else -> {
             //throw RuntimeException("Unknown viewholder for position $position")
         }
@@ -47,6 +52,8 @@ class MatchesAdapter(
             is LoaderCell -> -1002
             is MatchCell -> cell.match.id.hashCode().toLong()
             is BetCell -> cell.bet.id.hashCode().toLong()
+            is ResultsCell -> -1003
+            is EmptyCell -> -1004
             else -> 0
         }
     }
@@ -57,6 +64,8 @@ class MatchesAdapter(
         is MatchCell -> TYPE_MATCH
         is BetCell -> TYPE_BET
         is LoaderCell -> TYPE_LOADER
+        is ResultsCell -> TYPE_RESULTS
+        is EmptyCell -> TYPE_EMPTY
         else -> throw RuntimeException("Unknown viewtype for position $position")
     }
 
@@ -83,6 +92,8 @@ class MatchesAdapter(
         const val TYPE_MATCH = 3
         const val TYPE_BET = 4
         const val TYPE_LOADER = 5
+        const val TYPE_RESULTS = 6
+        const val TYPE_EMPTY = 7
     }
 
     private fun ViewGroup.inflate(@LayoutRes layout: Int): View =

@@ -9,8 +9,8 @@ android {
         applicationId "info.czekanski.bet"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 207
-        versionName "0.2.7"
+        versionCode 208
+        versionName "0.2.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 

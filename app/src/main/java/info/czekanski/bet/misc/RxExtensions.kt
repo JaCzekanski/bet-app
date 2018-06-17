@@ -3,7 +3,7 @@ package info.czekanski.bet.misc
 import com.uber.autodispose.*
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.*
 import io.reactivex.exceptions.OnErrorNotImplementedException
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
@@ -13,6 +13,10 @@ fun <T> Flowable<T>.applySchedulers(): Flowable<T> = subscribeOn(Schedulers.io()
 fun <T> Maybe<T>.applySchedulers(): Maybe<T>  = subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 fun <T> Single<T>.applySchedulers(): Single<T> = subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 fun Completable.applySchedulers(): Completable = subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+
+inline operator fun CompositeDisposable.plusAssign(disposable: Disposable) {
+    add(disposable)
+}
 
 private val onNextStub: (Any) -> Unit = {}
 private val onErrorStub: (Throwable) -> Unit = { RxJavaPlugins.onError(OnErrorNotImplementedException(it)) }

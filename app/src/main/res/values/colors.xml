@@ -13,4 +13,5 @@
 
     <color name="textNickActive">#de000000</color>
     <color name="textNickInctive">#80000000</color>
+    <color name="text_desc">#474a68</color>
 </resources>

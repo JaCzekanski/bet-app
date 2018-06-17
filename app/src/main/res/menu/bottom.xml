@@ -3,8 +3,12 @@
 
     <item
         android:id="@+id/action_home"
-        android:icon="@drawable/ic_playfield"
+        android:icon="@drawable/ic_home"
         android:title="@string/home"/>
+    <item
+        android:id="@+id/action_bets"
+        android:icon="@drawable/ic_playfield"
+        android:title="@string/typy"/>
     <item
         android:id="@+id/action_matches"
         android:icon="@drawable/ic_calendar"

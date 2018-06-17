@@ -32,6 +32,7 @@
         app:itemBackground="@drawable/menu_item_bg"
         app:itemIconTint="@color/menu_item"
         app:itemTextColor="@color/menu_item"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom"/>
 
 </android.support.design.widget.CoordinatorLayout>

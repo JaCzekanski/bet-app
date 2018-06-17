@@ -32,4 +32,10 @@
     <string name="przypomnienie">Przypomnienie</string>
     <string name="przypomnienie_desc">Przypomnienie o meczu</string>
     <string name="wynik_desc">Wynik meczu</string>
+    <string name="typy">Typy</string>
+    <string name="typowane_mecze">Typowane mecze</string>
+    <string name="trafione_wyniki">Trafione wyniki</string>
+    <string name="empty_text_1">Nic tu nie ma.</string>
+    <string name="empty_text_2">Niczego tu nie znajdę.</string>
+    <string name="empty_text_3">Nie ma czego plądrować.</string>
 </resources>
