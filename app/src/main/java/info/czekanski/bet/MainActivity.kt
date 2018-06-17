@@ -27,10 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         if (!userProvider.loggedIn) {
-            startActivity(
-                    Intent(this, LoginActivity::class.java)
-                            .setData(intent.data)
-            )
+            startActivity(Intent(this, LoginActivity::class.java).setData(intent.data))
             finish()
             return
         }

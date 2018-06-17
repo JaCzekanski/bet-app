@@ -25,4 +25,11 @@
     <string name="koniec">KONIEC</string>
     <string name="witaj">Witaj</string>
     <string name="hej_nick">Hej, %s.</string>
+    <string name="zaproszenie">Zaproszenie</string>
+    <string name="zaproszenie_desc">Zaproszenie do zakładu</string>
+    <string name="pozostale">Pozostałe</string>
+    <string name="pozostale_desc">Bez kategorii</string>
+    <string name="przypomnienie">Przypomnienie</string>
+    <string name="przypomnienie_desc">Przypomnienie o meczu</string>
+    <string name="wynik_desc">Wynik meczu</string>
 </resources>
