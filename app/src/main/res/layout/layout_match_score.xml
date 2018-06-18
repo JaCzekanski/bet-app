@@ -60,7 +60,7 @@
                     android:background="?selectableItemBackground"
                     android:padding="8dp"
                     android:tint="@color/colorAccent"
-                    app:srcCompat="@drawable/ic_remove"/>
+                    android:src="@drawable/ic_remove"/>
 
                 <ImageView
                     android:id="@+id/buttonPlus1"
@@ -69,7 +69,7 @@
                     android:background="?selectableItemBackground"
                     android:padding="8dp"
                     android:tint="@color/colorAccent"
-                    app:srcCompat="@drawable/ic_add"/>
+                    android:src="@drawable/ic_add"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -115,7 +115,7 @@
                     android:background="?selectableItemBackground"
                     android:padding="8dp"
                     android:tint="@color/colorAccent"
-                    app:srcCompat="@drawable/ic_remove"/>
+                    android:src="@drawable/ic_remove"/>
 
                 <ImageView
                     android:id="@+id/buttonPlus2"
@@ -124,7 +124,7 @@
                     android:background="?selectableItemBackground"
                     android:padding="8dp"
                     android:tint="@color/colorAccent"
-                    app:srcCompat="@drawable/ic_add"/>
+                    android:src="@drawable/ic_add"/>
             </LinearLayout>
         </LinearLayout>
 

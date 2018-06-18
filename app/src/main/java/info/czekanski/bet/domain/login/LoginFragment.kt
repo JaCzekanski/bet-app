@@ -17,6 +17,7 @@ import info.czekanski.bet.user.UserProvider
 import io.reactivex.Completable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_login.*
+import timber.log.Timber
 
 class LoginFragment : Fragment() {
     private val loading = MutableLiveData<Boolean>()
@@ -35,7 +36,7 @@ class LoginFragment : Fragment() {
                     .andThen(Completable.defer {
                         val token = FirebaseInstanceId.getInstance().token
                         if (token != null) {
-                            Log.d("LoginFragment", "fcmToken: $token")
+                            Timber.d("fcmToken: $token")
                             userProvider.setFcmToken(token)
                         } else {
                             Completable.complete()
@@ -46,7 +47,7 @@ class LoginFragment : Fragment() {
                     .subscribeBy(onComplete = {
                         goToHome()
                     }, onError = {
-                        Log.e("LoginFragment", "login", it)
+                        Timber.d("login", it)
                         goToHome()
                     })
         }

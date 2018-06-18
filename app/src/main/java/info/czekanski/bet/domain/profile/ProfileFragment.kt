@@ -16,6 +16,7 @@ import info.czekanski.bet.user.UserProvider
 import io.reactivex.Completable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_profile.*
+import timber.log.Timber
 
 class ProfileFragment : Fragment() {
     private val userProvider by lazy { UserProvider.instance }
@@ -57,7 +58,7 @@ class ProfileFragment : Fragment() {
                                     requireActivity().recreate()
                                 }, onError = {
                                     Toast.makeText(context, "Problem z usuwaniem konta, spróbuj później", Toast.LENGTH_LONG).show()
-                                    Log.e("ProfileFragment", "DeleteAccount", it)
+                                    Timber.e(it, "DeleteAccount")
                                 })
                     }).create()
 

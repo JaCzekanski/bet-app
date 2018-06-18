@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="32dp"
             android:paddingRight="32dp"
-            app:srcCompat="@drawable/ic_account_circle"/>
+            android:src="@drawable/ic_account_circle"/>
 
         <TextView
             android:id="@+id/textNick"

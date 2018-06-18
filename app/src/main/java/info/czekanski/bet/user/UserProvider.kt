@@ -9,6 +9,7 @@ import info.czekanski.bet.model.TokenRequest
 import info.czekanski.bet.network.BetService
 import io.reactivex.*
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 
 class UserProvider private constructor(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) {
     var nick: String? = null
@@ -66,7 +67,7 @@ class UserProvider private constructor(private val firestore: FirebaseFirestore,
                 .cache()
 
         single.subscribeBy(onError = {
-            Log.e("UserProvider", "loadNick", it)
+            Timber.tag("UserProvider").e(it, "loadNick")
         })
         return single
     }

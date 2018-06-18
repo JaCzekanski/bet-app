@@ -13,7 +13,7 @@
         android:layout_marginTop="-60dp"
         android:layout_marginRight="-80dp"
         app:tint="#07000000"
-        app:srcCompat="@drawable/ic_ball"/>
+        android:src="@drawable/ic_ball"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"

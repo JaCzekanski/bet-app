@@ -3,25 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/bottom_nav_height"/>
-    <!--<fragment-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:id="@+id/navHostFragment"-->
-        <!--android:name="androidx.navigation.fragment.NavHostFragment"-->
-        <!--app:navGraph="@navigation/navigation"-->
-        <!--app:defaultNavHost="true"-->
-        <!--android:layout_marginBottom="@dimen/bottom_nav_height"/>-->
-    <!--<FrameLayout-->
-        <!--android:id="@+id/container"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"/>-->
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottomNavigation"
@@ -34,5 +23,13 @@
         app:itemTextColor="@color/menu_item"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom"/>
+
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/bottom_nav_height"/>
 
 </android.support.design.widget.CoordinatorLayout>

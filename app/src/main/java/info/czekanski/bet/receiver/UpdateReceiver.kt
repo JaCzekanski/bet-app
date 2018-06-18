@@ -6,6 +6,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import info.czekanski.bet.repository.PreferencesProvider
 import info.czekanski.bet.user.UserProvider
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 
 class UpdateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
@@ -16,14 +17,14 @@ class UpdateReceiver : BroadcastReceiver() {
         if (!preferences.deviceRegistered) {
             val token = FirebaseInstanceId.getInstance().token
             if (token == null) {
-                Log.d("UpdateReceiver", "Token == null, exiting")
+                Timber.d("Token == null, exiting")
                 return
             }
-            Log.d("UpdateReceiver", "Sending token")
+            Timber.d("Sending token")
             userProvider.setFcmToken(token)
                     .subscribeBy(
-                            onComplete = { Log.d("MainActivity", "Success") },
-                            onError = { Log.e("MainActivity", "Failure", it) }
+                            onComplete = { Timber.d("Success") },
+                            onError = { Timber.e(it,"Failure") }
                     )
         }
     }

@@ -12,12 +12,15 @@ import info.czekanski.bet.domain.game.GameFragment
 import info.czekanski.bet.domain.matches.MatchesFragment
 import info.czekanski.bet.domain.profile.ProfileFragment
 import info.czekanski.bet.misc.*
-import info.czekanski.bet.repository.PreferencesProvider
+import info.czekanski.bet.repository.*
 import info.czekanski.bet.user.UserProvider
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity() {
+    private val config by lazy { ConfigProvider.instance }
     private val userProvider by lazy { UserProvider.instance }
     private val preferencesProvider by lazy { PreferencesProvider.getInstance(applicationContext) }
 
@@ -33,12 +36,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         initMenu()
 
-        if (parseDeeplink()) return
+        config.loadConfig()
+                .doOnSubscribe { bottomNavigation.hide(); progress.show() }
+                .doFinally { bottomNavigation.show(); progress.hide() }
+                .subscribeBy(onComplete = {
+                    if (parseDeeplink()) return@subscribeBy
 
-        if (savedInstanceState == null) {
-            preferencesProvider.runCount++
-            navigateWithTransition(HomeFragment())
-        }
+                    if (savedInstanceState == null) {
+                        preferencesProvider.runCount++
+                        navigateWithTransition(HomeFragment())
+                    }
+                })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -62,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             val uri = intent.data
             intent.data = null
 
-            Log.d("MainActivity", "Deeplink uri: $uri")
+            Timber.d("Deeplink uri: $uri")
 
             val result = Regex("/bet/(.*)/?\$").find(uri.path)
             if (result != null && result.groupValues.size == 2) {

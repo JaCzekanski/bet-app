@@ -2,7 +2,6 @@ package info.czekanski.bet.misc
 
 import android.view.View
 
-
 fun View.hide() {
     visibility = View.GONE
 }
@@ -17,7 +16,6 @@ fun View.show(visible: Boolean = true) {
 
 val View.visible: Boolean
     get() = visibility == View.VISIBLE
-
 
 
 val viewMap = mutableMapOf<View, Boolean>()

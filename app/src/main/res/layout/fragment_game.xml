@@ -27,14 +27,14 @@
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackgroundBorderless"
                 android:padding="12dp"
-                app:srcCompat="@drawable/ic_delete"/>
+                android:src="@drawable/ic_delete"/>
             <ImageView
                 android:id="@+id/buttonEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackgroundBorderless"
                 android:padding="12dp"
-                app:srcCompat="@drawable/ic_edit"/>
+                android:src="@drawable/ic_edit"/>
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
 
@@ -56,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:translationZ="1dp"
-            app:srcCompat="@drawable/ic_fold"/>
+            android:src="@drawable/ic_fold"/>
 
         <ImageView
             android:id="@+id/imageBall"
@@ -65,7 +65,7 @@
             android:layout_gravity="right"
             android:layout_marginTop="-60dp"
             android:layout_marginRight="-80dp"
-            app:srcCompat="@drawable/ic_ball"
+            android:src="@drawable/ic_ball"
             app:tint="#07000000"/>
 
         <include

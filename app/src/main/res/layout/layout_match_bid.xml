@@ -52,7 +52,7 @@
             android:background="?selectableItemBackground"
             android:padding="8dp"
             android:tint="@color/colorAccent"
-            app:srcCompat="@drawable/ic_remove"/>
+            android:src="@drawable/ic_remove"/>
 
         <ImageView
             android:id="@+id/buttonPlus"
@@ -62,7 +62,7 @@
             android:background="?selectableItemBackground"
             android:padding="8dp"
             android:tint="@color/colorAccent"
-            app:srcCompat="@drawable/ic_add"/>
+            android:src="@drawable/ic_add"/>
     </LinearLayout>
 
     <Space

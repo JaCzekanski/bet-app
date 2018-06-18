@@ -9,6 +9,7 @@ import info.czekanski.bet.network.firebase.model.FirebaseBet
 import info.czekanski.bet.repository.*
 import info.czekanski.bet.user.UserProvider
 import io.reactivex.rxkotlin.*
+import timber.log.Timber
 
 class HomeViewModel : BaseHomeViewModel() {
     private val betRepository by lazy { BetRepository.instance }
@@ -34,7 +35,7 @@ class HomeViewModel : BaseHomeViewModel() {
 
                     liveCells.value = cells
                 }, onError = {
-                    Log.e("HomeFragment", "LoadMatchesAndBets", it)
+                    Timber.e(it, "loadData")
                 })
     }
 

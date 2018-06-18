@@ -59,7 +59,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="center_horizontal"
-                app:srcCompat="@drawable/pl"/>
+                android:src="@drawable/pl"/>
 
             <TextView
                 android:id="@+id/team1"
@@ -128,7 +128,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="center_horizontal"
-                app:srcCompat="@drawable/pl"/>
+                android:src="@drawable/pl"/>
 
             <TextView
                 android:id="@+id/team2"

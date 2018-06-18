@@ -8,6 +8,7 @@ import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.misc.Cell
 import info.czekanski.bet.repository.*
 import io.reactivex.rxkotlin.*
+import timber.log.Timber
 
 class BetsViewModel : BaseHomeViewModel() {
     private val betsRepository by lazy { BetRepository.instance }
@@ -33,7 +34,7 @@ class BetsViewModel : BaseHomeViewModel() {
                     }
                     liveCells.value = cells
                 }, onError = {
-                    Log.e("BetsViewModel", "loadData", it)
+                    Timber.e(it, "loadData")
                 })
     }
 }

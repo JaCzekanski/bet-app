@@ -1,11 +1,11 @@
 package info.czekanski.bet.domain.matches
 
-import android.util.Log
 import info.czekanski.bet.domain.base.BaseHomeViewModel
 import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.misc.Cell
 import info.czekanski.bet.repository.MatchRepository
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 
 class MatchesViewModel : BaseHomeViewModel() {
     private val matchesRepository by lazy { MatchRepository.instance }
@@ -23,7 +23,7 @@ class MatchesViewModel : BaseHomeViewModel() {
                     }
                     liveCells.value = cells
                 }, onError = {
-                    Log.e("MatchesViewModel", "loadData", it)
+                    Timber.e(it, "loadData")
                 })
     }
 }

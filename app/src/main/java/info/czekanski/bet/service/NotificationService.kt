@@ -9,16 +9,17 @@ import android.util.Log
 import com.google.firebase.messaging.*
 import info.czekanski.bet.*
 import info.czekanski.bet.R
+import timber.log.Timber
 import java.util.*
 
 
 class NotificationService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG, "From: ${remoteMessage.from}")
+        Timber.d( "From: ${remoteMessage.from}")
 
         val data = remoteMessage.data
         if (data.isNotEmpty()) {
-            Log.d(TAG, "Message data payload: $data")
+            Timber.d( "Message data payload: $data")
 
             val title = data["title"]
             val body = data["body"]
@@ -69,7 +70,6 @@ class NotificationService : FirebaseMessagingService() {
     }
 
     companion object {
-        const val TAG = "NotificationService"
         const val CHANNEL_INVITE = "INVITE"
         const val CHANNEL_REMINDER = "REMINDER"
         const val CHANNEL_SCORE = "SCORE"

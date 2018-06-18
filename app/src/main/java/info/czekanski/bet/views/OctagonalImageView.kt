@@ -1,14 +1,16 @@
 package info.czekanski.bet.views
 
-import android.content.Context
+import android.content.*
 import android.graphics.*
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
+import info.czekanski.bet.repository.ConfigProvider
 
 
 class OctagonalImageView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
+    private val config by lazy { ConfigProvider.instance }
     private val sides = 8
     private val octagon = Path()
     private val temporal = Path()
@@ -27,7 +29,19 @@ class OctagonalImageView @JvmOverloads constructor(
 
         val rect = Rect()
         getDrawingRect(rect)
-        computeHex(rect)
+        if (config.roundFlags) computeRound(rect)
+        else computeHex(rect)
+    }
+
+    private fun computeRound(bounds: Rect) {
+        val width = bounds.width()
+        val height = bounds.height()
+        val size = Math.min(width, height)
+        val centerX = bounds.left + width / 2
+        val centerY = bounds.top + height / 2
+
+        octagon.reset()
+        octagon.addCircle(centerX.toFloat(), centerY.toFloat(), size/2f, Path.Direction.CW)
     }
 
     private fun computeHex(bounds: Rect) {

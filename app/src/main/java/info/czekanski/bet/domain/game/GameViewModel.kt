@@ -16,6 +16,7 @@ import info.czekanski.bet.misc.plusAssign
 import io.reactivex.*
 import io.reactivex.disposables.*
 import io.reactivex.rxkotlin.*
+import timber.log.Timber
 
 class GameViewModel : ViewModel() {
     private val subs = CompositeDisposable()
@@ -128,7 +129,7 @@ class GameViewModel : ViewModel() {
                                     step = Step.FRIENDS
                             )
                         }, onError = {
-                            Log.e("MatchFragment", "createShareLink", it)
+                            Timber.e(it, "createShareLink")
                         })
             }
         }
@@ -145,7 +146,7 @@ class GameViewModel : ViewModel() {
                         state.value = this.state.v.copy(closeView = true)
                     }, onError = {
                         toast.value = "Unable to delete bet!"
-                        Log.w("DeleteBet", it)
+                        Timber.e(it, "deleteBet")
                     })
         }
     }
@@ -163,7 +164,7 @@ class GameViewModel : ViewModel() {
                     }, onError = {
                         state.value = state.v.copy(step = Step.BID)
                         toast.value = "Unable to create bet!"
-                        Log.w("CreateBet", it)
+                        Timber.w(it)
                     })
         } else {
             subs += betService.api.updateBet(s.bet.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
@@ -172,7 +173,7 @@ class GameViewModel : ViewModel() {
                     .doFinally { state.value = this.state.v.copy(step = Step.LIST, showLoader = false) }
                     .subscribeBy(onError = {
                         toast.value = "Unable to update bet!"
-                        Log.w("UpdateBet", it)
+                        Timber.e(it, "updateOrCreateBet")
                     })
         }
     }
@@ -184,7 +185,7 @@ class GameViewModel : ViewModel() {
                         onNext = { state.value = state.v.copy(match = it) },
                         onError = {
                             toast.value = "Unable to load match!"
-                            Log.e("MatchFragment", "getMatch", it)
+                            Timber.e(it, "getMatch")
                         }
                 )
     }
@@ -198,7 +199,7 @@ class GameViewModel : ViewModel() {
                     if (state.v.match == null) loadMatch(bet.matchId)
                 }, onError = {
                     toast.value = "Unable to load bet!"
-                    Log.w("loadBet", it)
+                    Timber.e(it, "loadBet")
                 })
     }
 
@@ -216,7 +217,7 @@ class GameViewModel : ViewModel() {
                     val (userId, nick) = friend
                     state.value = state.v.updateNickname(userId, nick)
                 }, onError = {
-                    Log.e("LoadNicknames", "User ...", it)
+                    Timber.e(it, "loadNicknames")
                 })
 
     }
@@ -250,7 +251,7 @@ class GameViewModel : ViewModel() {
                 .doFinally { state.value = this.state.v.copy(showLoader = false) }
                 .subscribeBy(onError = {
                     toast.value = "Unable to share bet!"
-                    Log.w("shareLinkTo", it)
+                    Timber.e(it, "shareLinkTo")
                 })
     }
 
