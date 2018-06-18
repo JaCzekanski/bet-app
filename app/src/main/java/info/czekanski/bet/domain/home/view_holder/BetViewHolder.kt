@@ -34,9 +34,14 @@ class BetViewHolder(override val containerView: View, val callback: Callback) : 
         if (cell.bet.bets.size == 1 && userBet != null) {
             viewSeparator.hide()
             layoutBottom.hide()
-            buttonInvite.show()
-            buttonInvite.setOnClickListener {
-                callback(cell) // TODO: Change me
+
+            if (isAfterMatch) {
+                buttonInvite.hide()
+            } else {
+                buttonInvite.show()
+                buttonInvite.setOnClickListener {
+                    callback(cell) // TODO: Change me
+                }
             }
         } else {
             viewSeparator.show()
