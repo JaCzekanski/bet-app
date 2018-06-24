@@ -1,17 +1,22 @@
 package info.czekanski.bet.user
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import durdinapps.rxfirebase2.*
 import info.czekanski.bet.misc.applySchedulers
 import info.czekanski.bet.model.TokenRequest
-import info.czekanski.bet.network.BetService
+import info.czekanski.bet.network.BetApi
 import io.reactivex.*
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
+import javax.inject.*
 
-class UserProvider private constructor(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) {
+@Singleton
+class UserProvider @Inject constructor(
+        private val firestore: FirebaseFirestore,
+        private val auth: FirebaseAuth,
+        private val betApi: BetApi
+) {
     var nick: String? = null
         private set
 
@@ -73,20 +78,13 @@ class UserProvider private constructor(private val firestore: FirebaseFirestore,
     }
 
     fun setFcmToken(fcmToken: String): Completable {
-        return BetService.instance.api.registerDevice(TokenRequest(fcmToken), userId!!)
+        return betApi.registerDevice(TokenRequest(fcmToken), userId!!)
                 .applySchedulers()
     }
 
 
     fun removeFcmToken(): Completable {
-        return BetService.instance.api.unregisterDevice(userId!!)
+        return betApi.unregisterDevice(userId!!)
                 .applySchedulers()
-    }
-
-
-    companion object {
-        val instance by lazy {
-            UserProvider(FirebaseFirestore.getInstance(), FirebaseAuth.getInstance())
-        }
     }
 }

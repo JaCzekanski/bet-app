@@ -5,14 +5,16 @@ import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.*
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.game.summary.cells.SummaryCell
 import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.domain.home.view_holder.*
 import info.czekanski.bet.misc.Cell
+import info.czekanski.bet.user.UserProvider
+import javax.inject.Inject
 
-class MatchesAdapter(
-        private val callback: Callback
+class MatchesAdapter @Inject constructor(
+        val userProvider: UserProvider
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var callback: Callback = {}
     private var cells: List<Cell> = listOf()
 
     init {
@@ -23,7 +25,7 @@ class MatchesAdapter(
         TYPE_WELCOME -> WelcomeViewHolder(parent.inflate(R.layout.holder_home_welcome))
         TYPE_HEADER -> HeaderViewHolder(parent.inflate(R.layout.holder_home_header))
         TYPE_MATCH -> MatchViewHolder(parent.inflate(R.layout.holder_home_match), callback)
-        TYPE_BET -> BetViewHolder(parent.inflate(R.layout.holder_home_bet), callback)
+        TYPE_BET -> BetViewHolder(parent.inflate(R.layout.holder_home_bet), callback, userProvider)
         TYPE_LOADER -> StaticViewHolder(parent.inflate(R.layout.holder_home_loader))
         TYPE_RESULTS -> ResultsViewHolder(parent.inflate(R.layout.holder_home_results))
         TYPE_EMPTY -> EmptyViewHolder(parent.inflate(R.layout.holder_home_empty))
@@ -44,9 +46,9 @@ class MatchesAdapter(
         }
     }
 
-    override fun getItemId(position: Int): Long{
+    override fun getItemId(position: Int): Long {
         val cell = cells[position]
-        return when(cell) {
+        return when (cell) {
             is WelcomeCell -> -1000
             is HeaderCell -> cell.name.hashCode().toLong()
             is LoaderCell -> -1002
@@ -58,7 +60,7 @@ class MatchesAdapter(
         }
     }
 
-    override fun getItemViewType(position: Int) = when(cells[position]) {
+    override fun getItemViewType(position: Int) = when (cells[position]) {
         is WelcomeCell -> TYPE_WELCOME
         is HeaderCell -> TYPE_HEADER
         is MatchCell -> TYPE_MATCH
@@ -70,7 +72,7 @@ class MatchesAdapter(
     }
 
     fun setCells(new: List<Cell>) {
-        DiffUtil.calculateDiff(object : DiffUtil.Callback(){
+        DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 return cells[oldItemPosition].hashCode() == new[newItemPosition].hashCode()
             }

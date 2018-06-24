@@ -2,19 +2,20 @@ package info.czekanski.bet.domain.base
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.SimpleItemAnimator
 import android.view.*
 import info.czekanski.bet.R
+import info.czekanski.bet.di.utils.BaseFragment
 import info.czekanski.bet.domain.game.GameFragment
 import info.czekanski.bet.domain.home.MatchesAdapter
 import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.domain.home.utils.ListDecorator
 import info.czekanski.bet.misc.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import javax.inject.Inject
 
-abstract class BaseHomeFragment : Fragment() {
-    protected var matchesAdapter = MatchesAdapter(callback = this::onCellClicked)
+abstract class BaseHomeFragment : BaseFragment() {
+    @Inject lateinit var matchesAdapter: MatchesAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -30,6 +31,8 @@ abstract class BaseHomeFragment : Fragment() {
     protected abstract fun initializeViewModel()
 
     private fun initRecyclerView() {
+        matchesAdapter.callback = this::onCellClicked
+
         recyclerView.adapter = matchesAdapter
         recyclerView.addItemDecoration(ListDecorator())
         recyclerView.setHasFixedSize(true)

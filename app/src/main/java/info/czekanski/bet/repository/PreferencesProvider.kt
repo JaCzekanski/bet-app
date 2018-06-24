@@ -1,8 +1,11 @@
 package info.czekanski.bet.repository
 
 import android.content.*
+import javax.inject.Inject
 
-class PreferencesProvider(val sharedPreferences: SharedPreferences) {
+class PreferencesProvider @Inject constructor(
+        val sharedPreferences: SharedPreferences
+) {
 
     var runCount: Int
         get() = sharedPreferences.getInt(RUN_COUNT, 0)
@@ -15,15 +18,5 @@ class PreferencesProvider(val sharedPreferences: SharedPreferences) {
     companion object {
         private const val RUN_COUNT = "runCount"
         private const val DEVICE_REGISTERED = "deviceRegistered"
-        var _instance: PreferencesProvider? = null
-
-        fun getInstance(context: Context): PreferencesProvider {
-            if (_instance == null) {
-                _instance = PreferencesProvider(context.getSharedPreferences("preferences", Context.MODE_PRIVATE))
-            }
-
-            return _instance!!
-        }
-
     }
 }

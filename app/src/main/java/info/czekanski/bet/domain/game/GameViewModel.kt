@@ -2,29 +2,30 @@ package info.czekanski.bet.domain.game
 
 import android.arch.lifecycle.*
 import android.net.Uri
-import android.util.Log
 import com.google.firebase.dynamiclinks.*
 import durdinapps.rxfirebase2.RxHandler
 import info.czekanski.bet.domain.game.GameViewState.Step
 import info.czekanski.bet.misc.*
+import info.czekanski.bet.misc.plusAssign
 import info.czekanski.bet.network.*
 import info.czekanski.bet.network.firebase.model.FirebaseBet
 import info.czekanski.bet.network.model.Bet
 import info.czekanski.bet.repository.*
 import info.czekanski.bet.user.UserProvider
-import info.czekanski.bet.misc.plusAssign
 import io.reactivex.*
-import io.reactivex.disposables.*
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.*
 import timber.log.Timber
+import javax.inject.Inject
 
-class GameViewModel : ViewModel() {
+class GameViewModel @Inject constructor(
+        private val betService: BetApi,
+        private val userProvider: UserProvider,
+        private val betRepository: BetRepository,
+        private val matchRepository: MatchRepository,
+        private val friendsRepository: FriendsRepository
+) : ViewModel() {
     private val subs = CompositeDisposable()
-    private val betService: BetService by lazy { BetService.instance }
-    private val betRepository by lazy { BetRepository.instance }
-    private val matchRepository by lazy { MatchRepository.instance }
-    private val friendsRepository by lazy { FriendsRepository.instance }
-    private val userProvider by lazy { UserProvider.instance }
     private val state = MutableLiveData<GameViewState>()
     private val toast = MutableLiveData<String>()
 
@@ -138,7 +139,7 @@ class GameViewModel : ViewModel() {
     private fun deleteBet() {
         val s = state.v
         if (s.bet != null) {
-            subs += betService.api.deleteBet(s.bet.id, userProvider.userId!!)
+            subs += betService.deleteBet(s.bet.id, userProvider.userId!!)
                     .applySchedulers()
                     .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
                     .doFinally { state.value = this.state.v.copy(showLoader = false) }
@@ -155,7 +156,7 @@ class GameViewModel : ViewModel() {
         val s = state.v
         if (s.match == null) return
         if (s.bet == null) {
-            subs += betService.api.createBet(s.match.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
+            subs += betService.createBet(s.match.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
                     .applySchedulers()
                     .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
                     .doFinally { state.value = this.state.v.copy(step = Step.LIST, showLoader = false) }
@@ -167,7 +168,7 @@ class GameViewModel : ViewModel() {
                         Timber.w(it)
                     })
         } else {
-            subs += betService.api.updateBet(s.bet.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
+            subs += betService.updateBet(s.bet.id, Bet(state.v.bid, state.v.scoreAsString()), userProvider.userId!!)
                     .applySchedulers()
                     .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
                     .doFinally { state.value = this.state.v.copy(step = Step.LIST, showLoader = false) }
@@ -245,7 +246,7 @@ class GameViewModel : ViewModel() {
 
     fun shareLinkTo(userId: String) {
         val betId = state.v.bet?.id ?: return
-        betService.api.inviteUser(betId, userId, userProvider.userId!!)
+        betService.inviteUser(betId, userId, userProvider.userId!!)
                 .applySchedulers()
                 .doOnSubscribe { state.value = this.state.v.copy(showLoader = true) }
                 .doFinally { state.value = this.state.v.copy(showLoader = false) }

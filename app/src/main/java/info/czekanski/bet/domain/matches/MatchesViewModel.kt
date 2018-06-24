@@ -6,10 +6,11 @@ import info.czekanski.bet.misc.Cell
 import info.czekanski.bet.repository.MatchRepository
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
+import javax.inject.Inject
 
-class MatchesViewModel : BaseHomeViewModel() {
-    private val matchesRepository by lazy { MatchRepository.instance }
-
+class MatchesViewModel @Inject constructor(
+        private val matchesRepository: MatchRepository
+) : BaseHomeViewModel() {
     override fun loadData() {
         subscription = matchesRepository.getMatches()
                 .doOnSubscribe { liveCells.value = listOf(LoaderCell()) }

@@ -4,11 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.*
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import dagger.android.AndroidInjection
+import dagger.android.support.DaggerAppCompatActivity
+import info.czekanski.bet.R.id.*
 import info.czekanski.bet.domain.bets.BetsFragment
-import info.czekanski.bet.domain.home.HomeFragment
-import info.czekanski.bet.domain.login.*
 import info.czekanski.bet.domain.game.GameFragment
+import info.czekanski.bet.domain.home.HomeFragment
+import info.czekanski.bet.domain.login.LoginActivity
 import info.czekanski.bet.domain.matches.MatchesFragment
 import info.czekanski.bet.domain.profile.ProfileFragment
 import info.czekanski.bet.misc.*
@@ -17,12 +19,13 @@ import info.czekanski.bet.user.UserProvider
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
+import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity() {
-    private val config by lazy { ConfigProvider.instance }
-    private val userProvider by lazy { UserProvider.instance }
-    private val preferencesProvider by lazy { PreferencesProvider.getInstance(applicationContext) }
+class MainActivity : DaggerAppCompatActivity() {
+    @Inject lateinit var config: ConfigProvider
+    @Inject lateinit var userProvider: UserProvider
+    @Inject lateinit var preferencesProvider: PreferencesProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

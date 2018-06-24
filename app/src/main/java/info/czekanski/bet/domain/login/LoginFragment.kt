@@ -4,24 +4,24 @@ package info.czekanski.bet.domain.login
 import android.arch.lifecycle.*
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.*
-import android.util.Log
 import android.view.*
 import android.widget.EditText
 import com.google.firebase.iid.FirebaseInstanceId
 import info.czekanski.bet.*
 import info.czekanski.bet.R
+import info.czekanski.bet.di.utils.BaseFragment
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.user.UserProvider
 import io.reactivex.Completable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_login.*
 import timber.log.Timber
+import javax.inject.Inject
 
-class LoginFragment : Fragment() {
+class LoginFragment : BaseFragment() {
     private val loading = MutableLiveData<Boolean>()
-    private val userProvider by lazy { UserProvider.instance }
+    @Inject lateinit var userProvider: UserProvider
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
@@ -47,7 +47,7 @@ class LoginFragment : Fragment() {
                     .subscribeBy(onComplete = {
                         goToHome()
                     }, onError = {
-                        Timber.d("login", it)
+                        Timber.d(it, "login")
                         goToHome()
                     })
         }

@@ -10,13 +10,14 @@ import info.czekanski.bet.repository.*
 import info.czekanski.bet.user.UserProvider
 import io.reactivex.rxkotlin.*
 import timber.log.Timber
+import javax.inject.Inject
 
-class HomeViewModel : BaseHomeViewModel() {
-    private val betRepository by lazy { BetRepository.instance }
-    private val matchesRepository by lazy { MatchRepository.instance }
-    private val userProvider by lazy { UserProvider.instance }
-    private val preferencesProvider by lazy { PreferencesProvider._instance!! } // TODO: Kill it with fire!!!!!
-
+class HomeViewModel @Inject constructor(
+        private val userProvider: UserProvider,
+        private val betRepository: BetRepository,
+        private val matchesRepository: MatchRepository,
+        private val preferencesProvider: PreferencesProvider
+) : BaseHomeViewModel() {
     override fun loadData() {
         val betsFlowable = betRepository.getBets().retry()
         val matchesFlowable = matchesRepository.getMatches().retry()

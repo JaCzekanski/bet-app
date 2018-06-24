@@ -4,12 +4,11 @@ package info.czekanski.bet.domain.profile
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import info.czekanski.bet.R
+import info.czekanski.bet.di.utils.BaseFragment
 import info.czekanski.bet.domain.login.LoginActivity
 import info.czekanski.bet.misc.*
 import info.czekanski.bet.user.UserProvider
@@ -17,9 +16,10 @@ import io.reactivex.Completable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_profile.*
 import timber.log.Timber
+import javax.inject.Inject
 
-class ProfileFragment : Fragment() {
-    private val userProvider by lazy { UserProvider.instance }
+class ProfileFragment : BaseFragment() {
+    @Inject lateinit var userProvider: UserProvider
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_profile, container, false)

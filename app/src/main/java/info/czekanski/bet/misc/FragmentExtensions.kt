@@ -14,3 +14,4 @@ fun <T : Fragment> T.withArgument(arg: Parcelable): T {
 
 fun <T : Parcelable> Fragment.getArgument(): T =
         arguments?.getParcelable("ARG")!!
+

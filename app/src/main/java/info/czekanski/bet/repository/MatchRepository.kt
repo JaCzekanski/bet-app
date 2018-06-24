@@ -5,8 +5,11 @@ import durdinapps.rxfirebase2.RxFirestore
 import info.czekanski.bet.misc.applySchedulers
 import info.czekanski.bet.model.Match
 import io.reactivex.Flowable
+import javax.inject.Inject
 
-class MatchRepository(private val firestore: FirebaseFirestore) {
+class MatchRepository @Inject constructor(
+        private val firestore: FirebaseFirestore
+) {
 
     fun getMatches(): Flowable<List<Match>> {
         return RxFirestore.observeQueryRef(firestore.collection("matches").orderBy("date"))
@@ -23,11 +26,5 @@ class MatchRepository(private val firestore: FirebaseFirestore) {
                 .filter { it.exists() }
                 .map { it.toObject(Match::class.java)!!.copy(id = it.id) }
                 .applySchedulers()
-    }
-
-    companion object {
-        val instance by lazy {
-            MatchRepository(FirebaseFirestore.getInstance())
-        }
     }
 }

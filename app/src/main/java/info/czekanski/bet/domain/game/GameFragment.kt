@@ -1,17 +1,16 @@
 package info.czekanski.bet.domain.game
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.*
-import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.*
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.*
 import android.widget.Toast
 import info.czekanski.bet.R
-import info.czekanski.bet.domain.game.GameViewModel.*
+import info.czekanski.bet.di.utils.BaseFragment
+import info.czekanski.bet.domain.game.GameViewModel.Action
 import info.czekanski.bet.domain.game.GameViewState.Step.*
 import info.czekanski.bet.domain.game.friends.FriendsAdapter
 import info.czekanski.bet.domain.game.summary.SummaryAdapter
@@ -26,9 +25,10 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_game.*
 import kotlinx.android.synthetic.main.layout_match_bid.*
 import kotlinx.android.synthetic.main.layout_match_score.*
+import javax.inject.Inject
 
-class GameFragment : Fragment(), OnBackPressedInterface {
-    private val userProvider by lazy { UserProvider.instance }
+class GameFragment : BaseFragment(), OnBackPressedInterface {
+    @Inject lateinit var userProvider: UserProvider
     private val arg by lazy { getArgument<Argument>() }
     private val summaryAdapter = SummaryAdapter(this::listCallback)
 
@@ -40,7 +40,7 @@ class GameFragment : Fragment(), OnBackPressedInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
+        viewModel = viewModel<GameViewModel>()
 
         initToolbar()
         initViews()

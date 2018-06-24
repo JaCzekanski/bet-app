@@ -7,9 +7,12 @@ import info.czekanski.bet.user.RxHandlerCompletable
 import io.reactivex.Completable
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
-class ConfigProvider(private val remoteConfig: FirebaseRemoteConfig) {
+class ConfigProvider @Inject constructor(
+        private val remoteConfig: FirebaseRemoteConfig
+) {
     init {
         remoteConfig.setConfigSettings(FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.DEBUG)
@@ -49,9 +52,5 @@ class ConfigProvider(private val remoteConfig: FirebaseRemoteConfig) {
 
     companion object {
         private const val ROUND_FLAGS = "round_flags"
-
-        val instance by lazy {
-            ConfigProvider(FirebaseRemoteConfig.getInstance())
-        }
     }
 }

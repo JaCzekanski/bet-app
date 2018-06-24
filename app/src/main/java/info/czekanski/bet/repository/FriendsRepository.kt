@@ -5,8 +5,11 @@ import durdinapps.rxfirebase2.RxFirestore
 import info.czekanski.bet.misc.applySchedulers
 import info.czekanski.bet.network.firebase.model.FirebaseBet
 import io.reactivex.*
+import javax.inject.Inject
 
-class FriendsRepository(private val firestore: FirebaseFirestore) {
+class FriendsRepository @Inject constructor(
+        private val firestore: FirebaseFirestore
+) {
     private val cache = mutableMapOf<String, String?>()
 
     fun getFriends(userId: String): Single<List<Friend>> {
@@ -36,12 +39,6 @@ class FriendsRepository(private val firestore: FirebaseFirestore) {
                 .map { it.getString("nick") ?: "" }
                 .doOnSuccess { nick -> cache[userId] = nick }
                 .applySchedulers()
-    }
-
-    companion object {
-        val instance by lazy {
-            FriendsRepository(FirebaseFirestore.getInstance())
-        }
     }
 }
 

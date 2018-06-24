@@ -6,8 +6,10 @@ import info.czekanski.bet.misc.applySchedulers
 import info.czekanski.bet.network.firebase.model.FirebaseBet
 import info.czekanski.bet.user.UserProvider
 import io.reactivex.Flowable
+import javax.inject.*
 
-class BetRepository(
+@Singleton
+class BetRepository @Inject constructor(
         private val firestore: FirebaseFirestore,
         private val userProvider: UserProvider
 ) {
@@ -27,11 +29,5 @@ class BetRepository(
                 .filter { it.exists() }
                 .map { it.toObject(FirebaseBet::class.java)!!.copy(id = it.id) }
                 .applySchedulers()
-    }
-
-    companion object {
-        val instance by lazy {
-            BetRepository(FirebaseFirestore.getInstance(), UserProvider.instance)
-        }
     }
 }

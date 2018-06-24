@@ -1,19 +1,18 @@
 package info.czekanski.bet.domain.bets
 
-import android.util.Log
 import info.czekanski.bet.domain.base.BaseHomeViewModel
 import info.czekanski.bet.domain.home.HomeViewModel
-import info.czekanski.bet.domain.home.HomeViewModel.Companion.mergeMatchesIntoBets
 import info.czekanski.bet.domain.home.cells.*
 import info.czekanski.bet.misc.Cell
 import info.czekanski.bet.repository.*
 import io.reactivex.rxkotlin.*
 import timber.log.Timber
+import javax.inject.Inject
 
-class BetsViewModel : BaseHomeViewModel() {
-    private val betsRepository by lazy { BetRepository.instance }
-    private val matchesRepository by lazy { MatchRepository.instance }
-
+class BetsViewModel @Inject constructor(
+        private val betsRepository: BetRepository,
+        private val matchesRepository: MatchRepository
+) : BaseHomeViewModel() {
     override fun loadData() {
         val betsFlowable = betsRepository.getBets()
         val matchesFlowable = matchesRepository.getMatches()
